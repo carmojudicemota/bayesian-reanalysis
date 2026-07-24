@@ -1,0 +1,12 @@
+bayes_factor_results_wave1_sampled_validation
+claim_id,study_id,stat_test,bf_family,design,bf_sidedness,bf_direction,observed_sign,direction_matches_observed,prior_label,rscale,t_for_bf,df_for_bf,r_value,n1,n2,n_total,p_value,bf10,bf10_validation,bf_error
+study_05_claim_01,study_05,independent_t_test,t_test,independent,two_sided,NA,positive,NA,primary,0.707,3.2631700654818900,154,NA,23,133,156,0.00135718173128889,22.708801964218700,VALIDATED,1.62825285003321E-09
+study_14_claim_01,study_14,pearson_correlation,correlation,correlation,two_sided,NA,positive,NA,primary,1,3.876999222244790,56,0.4600143435956780,NA,NA,58,2.80109526752295E-04,102.21132923929100,VALIDATED,0
+study_21_claim_01,study_21,paired_t_test,t_test,one_sample,two_sided,NA,negative,NA,primary,0.707,-4.266812841710800,193,NA,NA,NA,194,3.1044182905069E-05,426.19429162904300,VALIDATED,5.06351110538998E-11
+study_22_claim_01,study_22,repeated_measures_anova,t_test,one_sample,two_sided,NA,positive,NA,primary,0.707,7.12450845249377,23,NA,NA,NA,24,2.95095510434227E-07,55202.842076427000,VALIDATED,3.92158600117951E-09
+study_33_claim_01,study_33,one_sample_t_test,t_test,one_sample,two_sided,NA,positive,NA,primary,0.707,4.270978296055970,11,NA,NA,NA,12,0.0013185060147071,31.720482926146600,VALIDATED,2.64299747150491E-09
+study_41_claim_02,study_41,paired_t_test,t_test,one_sample,two_sided,NA,positive,NA,primary,0.707,6.151246852292460,28,NA,NA,NA,29,1.21942538879796E-06,14725.20209602650,VALIDATED,1.23344175347613E-11
+study_47_claim_01,study_47,independent_t_test,t_test,independent,two_sided,NA,positive,NA,primary,0.707,2.232189658058010,119,NA,63,58,121,0.02747386297158550,1.7962424316465500,VALIDATED,1.04309213037265E-04
+study_49_claim_01,study_49,paired_t_test,t_test,one_sample,one_sided,positive,positive,TRUE,primary,0.707,1.2048289933537500,27,NA,NA,NA,28,0.11936204599031000,0.671997614246467,VALIDATED,1.49700701359418E-04
+study_51_claim_01,study_51,independent_t_test,t_test,independent,two_sided,NA,positive,NA,primary,0.707,2.7850391786323400,100,NA,54,48,102,0.00640275145451495,6.1391261151198800,VALIDATED,5.99970983958537E-09
+study_51_claim_02,study_51,independent_t_test,t_test,independent,two_sided,NA,negative,NA,primary,0.707,-0.9468752593737330,100,NA,54,48,102,0.3459848212862600,0.31189945440929000,PENDINING,2.2359501963643E-04
