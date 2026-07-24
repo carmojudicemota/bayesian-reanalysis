@@ -15,3 +15,6 @@ glmm_full,primary,random_sd,1.0
 glmm_normal, narrow, prior_sd, 0.3
 glmm_normal, primary, prior_sd, 0.6
 glmm_normal, wide, prior_sd, 1.0
+regression_mixture_g,narrow,rscale_cont,0.3535533905932738
+regression_mixture_g,primary,rscale_cont,0.5
+regression_mixture_g,wide,rscale_cont,0.7071067811865476
