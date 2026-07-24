@@ -181,52 +181,25 @@ run_study_43_bayes_factors <- function(
   invisible(results)
 }
 
-compute_study_43_bayes_factors <- function(
-    claim,
-    priors,
-    results_path = "outputs/intermediate/study_43_bayes_factors.csv") {
+compute_study_43_bayes_factors <- function(claim,priors,results_path = "outputs/intermediate/study_43_bayes_factors.csv") {
   
   if (!file.exists(results_path)) {
-    stop(
-      "Study 43 cached results not found: ",
-      results_path,
-      call. = FALSE
-    )
+    stop("Study 43 cached results not found: ",results_path,call. = FALSE)
   }
   
-  cached <- readr::read_csv(
-    results_path,
-    show_col_types = FALSE
+  cached <- readr::read_csv(results_path,show_col_types = FALSE
   ) |>
-    dplyr::filter(
-      .data$claim_id == claim$claim_id
-    ) |>
-    dplyr::mutate(
-      prior_order = match(
-        .data$prior_label,
-        c("narrow", "primary", "wide")
-      )
-    ) |>
+    dplyr::filter(.data$claim_id == claim$claim_id) |>
+    dplyr::mutate(prior_order = match(.data$prior_label,c("narrow", "primary", "wide"))) |>
     dplyr::arrange(.data$prior_order)
   
-  if (
-    nrow(cached) != 3L ||
-    anyNA(cached$prior_order)
-  ) {
-    stop(
-      "Study 43 requires three valid cached prior rows for ",
-      claim$claim_id,
-      ".",
-      call. = FALSE
-    )
+  if (nrow(cached) != 3L ||anyNA(cached$prior_order)) {
+    stop("Study 43 requires three valid cached prior rows for ",claim$claim_id,".",call. = FALSE)
   }
   
-  purrr::pmap_dfr(
-    cached,
-    function(...) {
-      row <- list(...)
-      
-      wave2_row(
+  purrr::pmap_dfr(cached,function(...) {
+    row <- list(...)
+    wave2_row(
         claim = claim,
         prior_label = row$prior_label,
         rscale = row$rscale,
