@@ -8,6 +8,7 @@ source("R/analyse/wave2/study_60.R")
 source("R/analyse/wave2/study_47.R")
 source("R/analyse/wave2/study_35.R")
 source("R/analyse/wave2/study_37_full_glmm.R")
+source("R/analyse/wave2/study_06.R")
 
 
 compute_wave2_bayes_factors <- function(
@@ -29,6 +30,7 @@ compute_wave2_bayes_factors <- function(
   )
   
   supported_claims <- c(
+    "study_06_claim_01",
     "study_29_claim_02",
     "study_10_claim_01",
     "study_10_claim_02",
@@ -68,6 +70,7 @@ compute_wave2_bayes_factors <- function(
         study_47 = compute_study_47_bayes_factors(claim = claim,priors = priors),
         study_35 = compute_study_35_bayes_factors(claim = claim,priors = priors),
         study_37 = compute_study_37_bayes_factors(claim = claim,priors = priors),
+        study_06 = compute_study_06_bayes_factors(claim = claim,priors = priors),
         stop(
           "No Wave 2 implementation for ",
           claim$claim_id,
