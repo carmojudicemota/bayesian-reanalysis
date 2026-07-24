@@ -184,6 +184,7 @@ compute_study_13_bayes_factors <- function(
       bf10 = row$bf10,
       log_bf10 = row$log_bf10,
       log10_bf10 = row$log10_bf10,
+      bf_error = NA_real_,
       model_null = row$model_null,
       model_alt = row$model_alt,
       bf_family = "welch_averaged",
