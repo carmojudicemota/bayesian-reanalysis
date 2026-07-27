@@ -15,22 +15,12 @@ source("R/analyse/wave2/study_55.R")
 
 
 compute_wave2_bayes_factors <- function(
-    claims_path =
-      "data/derived/claims.csv",
-    priors_path =
-      "config/priors_wave2.csv",
-    output_path =
-      "outputs/tables/bayes_factor_results_wave2.csv") {
+    claims_path = "data/derived/claims.csv",
+    priors_path = "config/priors_wave2.csv",
+    output_path = "outputs/tables/bayes_factor_results_wave2.csv") {
   
-  claims <- readr::read_csv(
-    claims_path,
-    show_col_types = FALSE
-  )
-  
-  priors <- readr::read_csv(
-    priors_path,
-    show_col_types = FALSE
-  )
+  claims <- readr::read_csv(claims_path,show_col_types = FALSE)
+  priors <- readr::read_csv(priors_path,show_col_types = FALSE )
   
   supported_claims <- c(
     "study_06_claim_01",
@@ -51,25 +41,13 @@ compute_wave2_bayes_factors <- function(
   )
   
   ready_claims <- claims |>
-    dplyr::filter(
-      .data$claim_id %in%
-        supported_claims,
-      .data$status == "ready",
-      .data$in_scope
-    )
+    dplyr::filter(.data$claim_id %in% supported_claims,
+                  .data$status == "ready", .data$in_scope)
   
   results <- purrr::map_dfr(
     seq_len(nrow(ready_claims)),
     function(i) {
-      
-      claim <- as.list(
-        ready_claims[
-          i,
-          ,
-          drop = FALSE
-        ]
-      )
-      
+      claim <- as.list(ready_claims[i,,drop = FALSE])
       switch(
         claim$study_id,
         study_29 = compute_study_29_bayes_factors(claim = claim,priors = priors),
@@ -92,33 +70,14 @@ compute_wave2_bayes_factors <- function(
     }
   )
   
-  if (nrow(ready_claims) == 0L) {
-    results <- wave2_result_template()
-  }
-  
-  dir.create(
-    dirname(output_path),
-    recursive = TRUE,
-    showWarnings = FALSE
-  )
-  
-  readr::write_csv(
-    results,
-    output_path,
-    na = ""
-  )
-  
+  if (nrow(ready_claims) == 0L) {results <- wave2_result_template() }
+  dir.create(dirname(output_path),recursive = TRUE,showWarnings = FALSE)
+  readr::write_csv(results,output_path,na = "")
   message(
     "Created Wave 2 output for ",
-    dplyr::n_distinct(
-      results$claim_id
-    ),
-    " claims from ",
-    dplyr::n_distinct(
-      results$study_id
-    ),
-    " studies."
-  )
+    dplyr::n_distinct(results$claim_id)," claims from ",
+    dplyr::n_distinct(results$study_id)," studies."
+    )
   
   invisible(results)
 }
