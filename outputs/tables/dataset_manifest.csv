@@ -1,5 +1,5 @@
 file_name,unit_of_observation,description,source_file,generated_by,generated_at_utc
-dataset_overview.csv,One row per result,High-level counts describing the complete claims dataset.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-24 12:24:51 UTC
-dataset_family_summary.csv,One row per statistical family,"Counts, status composition, data availability, and sample-size summaries by statistical family.",data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-24 12:24:51 UTC
-dataset_study_summary.csv,One row per study,"Claim composition, status, model families, and sample-size range for each source study.",data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-24 12:24:51 UTC
-dataset_data_dictionary.csv,One row per claims-table column,"Column type, completeness, and a human-readable definition for the authoritative claims table.",data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-24 12:24:51 UTC
+dataset_overview.csv,One row per result,High-level counts describing the complete claims dataset.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
+dataset_family_summary.csv,One row per statistical family,"Counts, status composition, data availability, and sample-size summaries by statistical family.",data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
+dataset_study_summary.csv,One row per study,"Claim composition, status, model families, and sample-size range for each source study.",data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
+dataset_data_dictionary.csv,One row per claims-table column,"Column type, completeness, and a human-readable definition for the authoritative claims table.",data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC

@@ -1,13 +1,13 @@
 metric,value,definition,source_file,generated_by,generated_at_utc
-total_claims,52,Number of claim-level targets in the full claims table.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-24 12:24:51 UTC
-total_studies,29,Number of distinct source studies represented.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-24 12:24:51 UTC
-in_scope_claims,47,Claims satisfying the project's scope rule.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-24 12:24:51 UTC
-out_of_scope_claims,5,Claims excluded by the project's scope rule.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-24 12:24:51 UTC
-ready_claims,33,Claims currently ready for Bayesian analysis.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-24 12:24:51 UTC
-pending_claims,14,Claims awaiting a family-specific Bayesian model or further specification.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-24 12:24:51 UTC
-held_claims,5,Claims retained in the registry but not entering the current analysis.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-24 12:24:51 UTC
-primary_claims,29,Claims classified as primary targets.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-24 12:24:51 UTC
-supplementary_claims,23,Claims classified as supplementary targets.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-24 12:24:51 UTC
-claims_with_raw_data,49,Claims linked to an identified raw-data file.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-24 12:24:51 UTC
-claims_with_p_value,49,Claims with an exact or best available p-value.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-24 12:24:51 UTC
-claims_with_sample_size,49,Claims with a recorded total analysis sample size.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-24 12:24:51 UTC
+total_claims,52,Number of claim-level targets in the full claims table.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
+total_studies,29,Number of distinct source studies represented.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
+in_scope_claims,47,Claims satisfying the project's scope rule.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
+out_of_scope_claims,5,Claims excluded by the project's scope rule.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
+ready_claims,34,Claims currently ready for Bayesian analysis.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
+pending_claims,13,Claims awaiting a family-specific Bayesian model or further specification.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
+held_claims,5,Claims retained in the registry but not entering the current analysis.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
+primary_claims,29,Claims classified as primary targets.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
+supplementary_claims,23,Claims classified as supplementary targets.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
+claims_with_raw_data,49,Claims linked to an identified raw-data file.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
+claims_with_p_value,49,Claims with an exact or best available p-value.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
+claims_with_sample_size,49,Claims with a recorded total analysis sample size.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC

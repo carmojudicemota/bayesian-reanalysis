@@ -1,20 +1,23 @@
-prior_family, prior_label, param, value
-anova_cauchy, narrow, rscale_fixed, 0.25
-anova_cauchy, primary, rscale_fixed, 0.5
-anova_cauchy, wide, rscale_fixed, 0.707
-anova_cauchy, primary, rscale_random, 1.0
-welch_averaged, narrow, delta_scale, 0.5
-welch_averaged, primary, delta_scale, 0.707
-welch_averaged, wide, delta_scale, 1.0
+prior_family,prior_label,param,value
+anova_cauchy,narrow,rscale_fixed,0.25
+anova_cauchy,primary,rscale_fixed,0.5
+anova_cauchy,wide,rscale_fixed,0.707
+anova_cauchy,primary,rscale_random,1
+welch_averaged,narrow,delta_scale,0.5
+welch_averaged,primary,delta_scale,0.707
+welch_averaged,wide,delta_scale,1
 glmm_full,narrow,focal_sd,0.3
 glmm_full,primary,focal_sd,0.6
-glmm_full,wide,focal_sd,1.0
-glmm_full,primary,nuisance_sd,1.0
+glmm_full,wide,focal_sd,1
+glmm_full,primary,nuisance_sd,1
 glmm_full,primary,intercept_sd,2.5
-glmm_full,primary,random_sd,1.0
-glmm_normal, narrow, prior_sd, 0.3
-glmm_normal, primary, prior_sd, 0.6
-glmm_normal, wide, prior_sd, 1.0
+glmm_full,primary,random_sd,1
+glmm_normal,narrow,prior_sd,0.3
+glmm_normal,primary,prior_sd,0.6
+glmm_normal,wide,prior_sd,1
 regression_mixture_g,narrow,rscale_cont,0.3535533905932738
 regression_mixture_g,primary,rscale_cont,0.5
 regression_mixture_g,wide,rscale_cont,0.7071067811865476
+welch_anova_normal,narrow,contrast_prior_sd,0.25
+welch_anova_normal,primary,contrast_prior_sd,0.5
+welch_anova_normal,wide,contrast_prior_sd,0.7071067811865476
