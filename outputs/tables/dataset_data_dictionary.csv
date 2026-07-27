@@ -1,49 +1,49 @@
 column_name,storage_type,non_missing_n,missing_n,completeness_percent,description,source_file,generated_by,generated_at_utc
-claim_id,character,52,0,100,Stable project identifier for the claim-level target.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-study_id,character,52,0,100,Stable project identifier for the source study.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-doi,character,52,0,100,Digital Object Identifier of the source article.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-claim,character,52,0,100,Text of the scientific claim Ali selected for reanalysis.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-role,character,52,0,100,Whether the claim is primary or supplementary within the project registry (As defined by Ali).,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-direction,character,52,0,100,Prospectively recorded direction of a directional hypothesis.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-status,character,52,0,100,"Current status: ready, pending, or held.",data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-note,character,52,0,100,Methodological or reconstruction note.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-result_position,character,52,0,100,Position or importance of the result within the source study.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-source_result_id,character,49,3,94.2,Identifier linking the claim to the source result record.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-article_result_from_phase1,character,52,0,100,Result as extracted from Ali's Phase 1.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-ali_test_name,character,52,0,100,Name of the statistical procedure used in Ali's reproduction file.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-ali_reported_result,character,52,0,100,Published result recorded in Ali's source files.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-ali_reproduced_result,character,52,0,100,Result obtained in Ali's computational reproduction.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-ali_result_status,character,52,0,100,Reproducibility status assigned in Ali's project.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-in_scope,logical,52,0,100,Whether the result satisfies this project's scope rules.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-scope_exclusion_reason,character,5,47,9.6,Reason a claim is excluded from scope.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-project_verified_result,character,49,3,94.2,Result recomputed and verified in the present project.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-project_result_status,character,49,3,94.2,Method and status of the present project's verification.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-frequentist_test,character,49,3,94.2,Canonical frequentist model or test family assigned by us to the result.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-p_value,numeric,49,3,94.2,Exact or best available p-value.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-p_operator,character,49,3,94.2,"Reported comparison operator attached to the p-value, such as = or <.",data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-p_sidedness,character,49,3,94.2,"Whether the published test was one-sided, two-sided, or omnibus.",data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-t_value,numeric,22,30,42.3,"Reconstructed t-statistic, when applicable.",data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-t_df,numeric,22,30,42.3,Degrees of freedom associated with the t-statistic.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-f_value,numeric,18,34,34.6,"Reconstructed F-statistic, when applicable.",data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-f_df1,numeric,18,34,34.6,Numerator degrees of freedom of the F-statistic.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-f_df2,numeric,18,34,34.6,Denominator degrees of freedom of the F-statistic.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-z_value,numeric,6,46,11.5,"Reconstructed z-statistic, when applicable.",data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-chi2_value,numeric,2,50,3.8,"Reconstructed chi-square statistic, when applicable.",data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-chi2_df,numeric,2,50,3.8,Degrees of freedom of the chi-square statistic.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-r_value,numeric,4,48,7.7,"Reconstructed Pearson or rank correlation coefficient, when applicable.",data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-n1,numeric,18,34,34.6,"Analysis sample size for group 1, where the design has two independent groups.",data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-n2,numeric,18,34,34.6,"Analysis sample size for group 2, where the design has two independent groups.",data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-n_total,numeric,49,3,94.2,Total analysis sample size for the target result.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-n_eff,numeric,25,27,48.1,Effective sample size used or derived for the target analysis.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-effect_size_type,character,49,3,94.2,Definition of the reported or reconstructed effect-size measure.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-effect_size_value,numeric,46,6,88.5,Numerical value of the reported or reconstructed effect size.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-estimate,numeric,36,16,69.2,"Model coefficient, contrast estimate, or other estimate.",data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-se_estimate,numeric,28,24,53.8,Standard error associated with the estimate.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-raw_data_file,character,49,3,94.2,Source raw-data file used for recomputation.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-raw_variable_names,character,49,3,94.2,Raw variables used to reconstruct the result.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-model_formula,character,49,3,94.2,Model formula used in recomputation,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-contrast_direction,character,49,3,94.2,Definition and orientation of the contrast.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-extraction_note,character,49,3,94.2,"Detailed notes on extraction, reconstruction, or interpretation.",data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-source_file,character,49,3,94.2,Project file from which the verified result was compiled.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-source_row_id,numeric,49,3,94.2,Row identifier within the project source file.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-source_study_id,character,49,3,94.2,Study identifier retained from the upstream source files.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
+claim_id,character,52,0,100,Stable project identifier for the claim-level target.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+study_id,character,52,0,100,Stable project identifier for the source study.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+doi,character,52,0,100,Digital Object Identifier of the source article.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+claim,character,52,0,100,Text of the scientific claim Ali selected for reanalysis.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+role,character,52,0,100,Whether the claim is primary or supplementary within the project registry (As defined by Ali).,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+direction,character,52,0,100,Prospectively recorded direction of a directional hypothesis.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+status,character,52,0,100,"Current status: ready, pending, or held.",data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+note,character,52,0,100,Methodological or reconstruction note.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+result_position,character,52,0,100,Position or importance of the result within the source study.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+source_result_id,character,49,3,94.2,Identifier linking the claim to the source result record.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+article_result_from_phase1,character,52,0,100,Result as extracted from Ali's Phase 1.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+ali_test_name,character,52,0,100,Name of the statistical procedure used in Ali's reproduction file.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+ali_reported_result,character,52,0,100,Published result recorded in Ali's source files.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+ali_reproduced_result,character,52,0,100,Result obtained in Ali's computational reproduction.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+ali_result_status,character,52,0,100,Reproducibility status assigned in Ali's project.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+in_scope,logical,52,0,100,Whether the result satisfies this project's scope rules.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+scope_exclusion_reason,character,5,47,9.6,Reason a claim is excluded from scope.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+project_verified_result,character,49,3,94.2,Result recomputed and verified in the present project.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+project_result_status,character,49,3,94.2,Method and status of the present project's verification.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+frequentist_test,character,49,3,94.2,Canonical frequentist model or test family assigned by us to the result.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+p_value,numeric,49,3,94.2,Exact or best available p-value.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+p_operator,character,49,3,94.2,"Reported comparison operator attached to the p-value, such as = or <.",data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+p_sidedness,character,49,3,94.2,"Whether the published test was one-sided, two-sided, or omnibus.",data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+t_value,numeric,22,30,42.3,"Reconstructed t-statistic, when applicable.",data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+t_df,numeric,22,30,42.3,Degrees of freedom associated with the t-statistic.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+f_value,numeric,18,34,34.6,"Reconstructed F-statistic, when applicable.",data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+f_df1,numeric,18,34,34.6,Numerator degrees of freedom of the F-statistic.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+f_df2,numeric,18,34,34.6,Denominator degrees of freedom of the F-statistic.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+z_value,numeric,6,46,11.5,"Reconstructed z-statistic, when applicable.",data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+chi2_value,numeric,2,50,3.8,"Reconstructed chi-square statistic, when applicable.",data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+chi2_df,numeric,2,50,3.8,Degrees of freedom of the chi-square statistic.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+r_value,numeric,4,48,7.7,"Reconstructed Pearson or rank correlation coefficient, when applicable.",data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+n1,numeric,18,34,34.6,"Analysis sample size for group 1, where the design has two independent groups.",data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+n2,numeric,18,34,34.6,"Analysis sample size for group 2, where the design has two independent groups.",data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+n_total,numeric,49,3,94.2,Total analysis sample size for the target result.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+n_eff,numeric,25,27,48.1,Effective sample size used or derived for the target analysis.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+effect_size_type,character,49,3,94.2,Definition of the reported or reconstructed effect-size measure.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+effect_size_value,numeric,46,6,88.5,Numerical value of the reported or reconstructed effect size.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+estimate,numeric,36,16,69.2,"Model coefficient, contrast estimate, or other estimate.",data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+se_estimate,numeric,28,24,53.8,Standard error associated with the estimate.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+raw_data_file,character,49,3,94.2,Source raw-data file used for recomputation.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+raw_variable_names,character,49,3,94.2,Raw variables used to reconstruct the result.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+model_formula,character,49,3,94.2,Model formula used in recomputation,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+contrast_direction,character,49,3,94.2,Definition and orientation of the contrast.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+extraction_note,character,49,3,94.2,"Detailed notes on extraction, reconstruction, or interpretation.",data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+source_file,character,49,3,94.2,Project file from which the verified result was compiled.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+source_row_id,numeric,49,3,94.2,Row identifier within the project source file.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+source_study_id,character,49,3,94.2,Study identifier retained from the upstream source files.,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC

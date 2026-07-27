@@ -1,18 +1,18 @@
 family_key,family_label,claim_count,study_count,primary_claims,supplementary_claims,ready_claims,pending_claims,held_claims,in_scope_claims,raw_data_available_claims,sample_size_available_claims,minimum_n,median_n,maximum_n,source_file,generated_by,generated_at_utc
-paired_t_test,Paired t-test,8,5,5,3,7,0,1,7,8,8,28,33.5,194,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-factorial_between_anova,Factorial between-subjects ANOVA,7,4,4,3,6,0,1,6,7,7,26,433,1049,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-independent_t_test,Independent t-test,7,4,4,3,7,0,0,7,7,7,102,156,248,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-manova,MANOVA,5,3,3,2,0,5,0,5,5,5,170,213,296,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-mixed_anova,Mixed ANOVA,4,3,2,2,4,0,0,4,4,4,60,67,121,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-unclassified,Unclassified / held,3,3,0,3,0,0,3,0,0,0,,,,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-mixed_effects_logistic_regression,Mixed-effects logistic regression,2,1,1,1,2,0,0,2,2,2,563,563,563,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-one_sample_t_test,One-sample t-test,2,1,1,1,2,0,0,2,2,2,12,12,12,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-pearson_correlation,Pearson correlation,2,1,1,1,2,0,0,2,2,2,58,144,230,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-sem_contrast,SEM contrast,2,1,1,1,0,2,0,2,2,2,153,153,153,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-spearman_correlation,Spearman correlation,2,1,1,1,0,2,0,2,2,2,30,30.5,31,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-welch_independent_t_test,Welch t-test,2,1,1,1,2,0,0,2,2,2,498,498,498,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-wilcoxon_signed_rank,Wilcoxon signed-rank,2,1,1,1,0,2,0,2,2,2,50,50,50,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-chi_square_difference,Chi-square difference,1,1,1,0,0,1,0,1,1,1,370,370,370,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-friedman_test,Friedman test,1,1,1,0,0,1,0,1,1,1,546,546,546,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-repeated_measures_anova,One-df repeated-measures ANOVA,1,1,1,0,1,0,0,1,1,1,24,24,24,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
-welch_anova,Welch ANOVA,1,1,1,0,1,0,0,1,1,1,154,154,154,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 09:24:10 UTC
+paired_t_test,Paired t-test,8,5,5,3,7,0,1,7,8,8,28,33.5,194,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+factorial_between_anova,Factorial between-subjects ANOVA,7,4,4,3,6,0,1,6,7,7,26,433,1049,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+independent_t_test,Independent t-test,7,4,4,3,7,0,0,7,7,7,102,156,248,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+manova,MANOVA,5,3,3,2,0,5,0,5,5,5,170,213,296,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+mixed_anova,Mixed ANOVA,4,3,2,2,4,0,0,4,4,4,60,67,121,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+unclassified,Unclassified / held,3,3,0,3,0,0,3,0,0,0,,,,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+mixed_effects_logistic_regression,Mixed-effects logistic regression,2,1,1,1,2,0,0,2,2,2,563,563,563,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+one_sample_t_test,One-sample t-test,2,1,1,1,2,0,0,2,2,2,12,12,12,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+pearson_correlation,Pearson correlation,2,1,1,1,2,0,0,2,2,2,58,144,230,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+sem_contrast,SEM contrast,2,1,1,1,0,2,0,2,2,2,153,153,153,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+spearman_correlation,Spearman correlation,2,1,1,1,0,2,0,2,2,2,30,30.5,31,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+welch_independent_t_test,Welch t-test,2,1,1,1,2,0,0,2,2,2,498,498,498,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+wilcoxon_signed_rank,Wilcoxon signed-rank,2,1,1,1,0,2,0,2,2,2,50,50,50,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+chi_square_difference,Chi-square difference,1,1,1,0,0,1,0,1,1,1,370,370,370,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+friedman_test,Friedman test,1,1,1,0,0,1,0,1,1,1,546,546,546,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+repeated_measures_anova,One-df repeated-measures ANOVA,1,1,1,0,1,0,0,1,1,1,24,24,24,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+welch_anova,Welch ANOVA,1,1,1,0,1,0,0,1,1,1,154,154,154,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
