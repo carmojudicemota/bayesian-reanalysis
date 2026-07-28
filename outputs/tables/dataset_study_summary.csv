@@ -1,30 +1,30 @@
 study_id,doi,claim_count,primary_claims,supplementary_claims,ready_claims,pending_claims,held_claims,in_scope_claims,statistical_families,raw_data_available,minimum_n,maximum_n,source_file,generated_by,generated_at_utc
-study_03,10.1037/stl0000432,2,1,1,0,2,0,2,MANOVA,TRUE,170,170,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
-study_05,10.1037/stl0000136,2,1,1,2,0,0,2,Independent t-test,TRUE,156,156,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
-study_06,10.1177/14757257241295302,1,1,0,1,0,0,1,Factorial between-subjects ANOVA,TRUE,26,26,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
-study_10,10.1037/stl0000338,2,1,1,2,0,0,2,Factorial between-subjects ANOVA,TRUE,1049,1049,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
-study_13,10.1177/00986283221142016,2,1,1,2,0,0,2,Welch t-test,TRUE,498,498,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
-study_14,10.1177/1475725719859453,2,1,1,2,0,0,2,Pearson correlation,TRUE,58,230,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
-study_18,10.1177/00986283221130298,1,1,0,0,1,0,1,MANOVA,TRUE,296,296,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
-study_20,10.1177/14757257221098860,2,1,1,0,2,0,2,SEM contrast,TRUE,153,153,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
-study_21,10.1177/0098628318762900,2,1,1,1,0,1,1,Paired t-test; Unclassified / held,TRUE,194,194,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
-study_22,10.1177/14757257231163482,2,1,1,1,0,1,1,One-df repeated-measures ANOVA; Unclassified / held,TRUE,24,24,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
-study_26,10.1177/00986283221108129,2,1,1,0,2,0,2,Wilcoxon signed-rank,TRUE,50,50,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
-study_27,10.1177/00986283211065746,2,1,1,1,0,1,1,Paired t-test,TRUE,39,39,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
-study_29,10.1177/0098628319888087,2,1,1,1,0,1,1,Factorial between-subjects ANOVA,TRUE,433,436,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
-study_30,10.1037/stl0000104,1,1,0,1,0,0,1,Paired t-test,TRUE,37,37,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
-study_33,10.1037/stl0000227,2,1,1,2,0,0,2,One-sample t-test,TRUE,12,12,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
-study_35,10.1037/stl0000314,1,1,0,1,0,0,1,Mixed ANOVA,TRUE,60,60,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
-study_37,10.1037/stl0000356,2,1,1,2,0,0,2,Mixed-effects logistic regression,TRUE,563,563,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
-study_39,10.1037/stl0000385,2,1,1,0,2,0,2,Spearman correlation,TRUE,30,31,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
-study_40,10.1037/stl0000412,2,1,1,0,1,1,1,Chi-square difference; Unclassified / held,TRUE,370,370,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
-study_41,10.1177/00986283251313760,2,1,1,2,0,0,2,Paired t-test,TRUE,29,30,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
-study_43,10.1177/00986283231218943,2,1,1,2,0,0,2,Mixed ANOVA,TRUE,67,67,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
-study_44,10.1177/00986283231199454,2,1,1,0,2,0,2,MANOVA,TRUE,213,213,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
-study_45,10.1177/00986283241247181,1,1,0,0,1,0,1,Friedman test,TRUE,546,546,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
-study_47,10.1177/00986283231226187,2,1,1,2,0,0,2,Independent t-test; Mixed ANOVA,TRUE,121,121,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
-study_49,10.1177/00986283251325842,2,1,1,2,0,0,2,Paired t-test,TRUE,28,28,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
-study_51,10.1177/14757257231197359,2,1,1,2,0,0,2,Independent t-test,TRUE,102,102,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
-study_53,10.1037/stl0000306,2,1,1,2,0,0,2,Independent t-test,TRUE,248,248,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
-study_55,10.1177/14757257241301733,1,1,0,1,0,0,1,Welch ANOVA,TRUE,154,154,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
-study_60,10.1177/00986283211043779,2,1,1,2,0,0,2,Factorial between-subjects ANOVA,TRUE,326,326,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-27 10:44:30 UTC
+study_03,10.1037/stl0000432,2,1,1,2,0,0,2,MANOVA,TRUE,170,170,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-28 16:41:48 UTC
+study_05,10.1037/stl0000136,2,1,1,2,0,0,2,Independent t-test,TRUE,156,156,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-28 16:41:48 UTC
+study_06,10.1177/14757257241295302,1,1,0,1,0,0,1,Factorial between-subjects ANOVA,TRUE,26,26,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-28 16:41:48 UTC
+study_10,10.1037/stl0000338,2,1,1,2,0,0,2,Factorial between-subjects ANOVA,TRUE,1049,1049,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-28 16:41:48 UTC
+study_13,10.1177/00986283221142016,2,1,1,2,0,0,2,Welch t-test,TRUE,498,498,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-28 16:41:48 UTC
+study_14,10.1177/1475725719859453,2,1,1,2,0,0,2,Pearson correlation,TRUE,58,230,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-28 16:41:48 UTC
+study_18,10.1177/00986283221130298,1,1,0,0,1,0,1,MANOVA,TRUE,296,296,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-28 16:41:48 UTC
+study_20,10.1177/14757257221098860,2,1,1,0,2,0,2,SEM contrast,TRUE,153,153,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-28 16:41:48 UTC
+study_21,10.1177/0098628318762900,2,1,1,1,0,1,1,Paired t-test; Unclassified / held,TRUE,194,194,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-28 16:41:48 UTC
+study_22,10.1177/14757257231163482,2,1,1,1,0,1,1,One-df repeated-measures ANOVA; Unclassified / held,TRUE,24,24,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-28 16:41:48 UTC
+study_26,10.1177/00986283221108129,2,1,1,0,2,0,2,Wilcoxon signed-rank,TRUE,50,50,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-28 16:41:48 UTC
+study_27,10.1177/00986283211065746,2,1,1,1,0,1,1,Paired t-test,TRUE,39,39,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-28 16:41:48 UTC
+study_29,10.1177/0098628319888087,2,1,1,1,0,1,1,Factorial between-subjects ANOVA,TRUE,433,436,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-28 16:41:48 UTC
+study_30,10.1037/stl0000104,1,1,0,1,0,0,1,Paired t-test,TRUE,37,37,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-28 16:41:48 UTC
+study_33,10.1037/stl0000227,2,1,1,2,0,0,2,One-sample t-test,TRUE,12,12,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-28 16:41:48 UTC
+study_35,10.1037/stl0000314,1,1,0,1,0,0,1,Mixed ANOVA,TRUE,60,60,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-28 16:41:48 UTC
+study_37,10.1037/stl0000356,2,1,1,2,0,0,2,Mixed-effects logistic regression,TRUE,563,563,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-28 16:41:48 UTC
+study_39,10.1037/stl0000385,2,1,1,0,2,0,2,Spearman correlation,TRUE,30,31,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-28 16:41:48 UTC
+study_40,10.1037/stl0000412,2,1,1,0,1,1,1,Chi-square difference; Unclassified / held,TRUE,370,370,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-28 16:41:48 UTC
+study_41,10.1177/00986283251313760,2,1,1,2,0,0,2,Paired t-test,TRUE,29,30,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-28 16:41:48 UTC
+study_43,10.1177/00986283231218943,2,1,1,2,0,0,2,Mixed ANOVA,TRUE,67,67,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-28 16:41:48 UTC
+study_44,10.1177/00986283231199454,2,1,1,0,2,0,2,MANOVA,TRUE,213,213,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-28 16:41:48 UTC
+study_45,10.1177/00986283241247181,1,1,0,0,1,0,1,Friedman test,TRUE,546,546,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-28 16:41:48 UTC
+study_47,10.1177/00986283231226187,2,1,1,2,0,0,2,Independent t-test; Mixed ANOVA,TRUE,121,121,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-28 16:41:48 UTC
+study_49,10.1177/00986283251325842,2,1,1,2,0,0,2,Paired t-test,TRUE,28,28,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-28 16:41:48 UTC
+study_51,10.1177/14757257231197359,2,1,1,2,0,0,2,Independent t-test,TRUE,102,102,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-28 16:41:48 UTC
+study_53,10.1037/stl0000306,2,1,1,2,0,0,2,Independent t-test,TRUE,248,248,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-28 16:41:48 UTC
+study_55,10.1177/14757257241301733,1,1,0,1,0,0,1,Welch ANOVA,TRUE,154,154,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-28 16:41:48 UTC
+study_60,10.1177/00986283211043779,2,1,1,2,0,0,2,Factorial between-subjects ANOVA,TRUE,326,326,data/derived/claims.csv,R/analyse/dataset.R::build_dataset_outputs,2026-07-28 16:41:48 UTC
