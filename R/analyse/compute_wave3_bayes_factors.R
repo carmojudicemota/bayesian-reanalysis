@@ -2,6 +2,7 @@ source("R/analyse/wave3/wave3_helpers.R")
 
 source("R/analyse/wave3/study_03.R")
 source("R/analyse/wave3/study_18.R")
+source("R/analyse/wave3/study_44.R")
 
 
 compute_wave3_bayes_factors <- function(claims_path = "data/derived/claims.csv",output_path = "outputs/tables/bayes_factor_results_wave3.csv",iter = 100000) {
@@ -9,7 +10,8 @@ compute_wave3_bayes_factors <- function(claims_path = "data/derived/claims.csv",
   claims <- readr::read_csv(claims_path,show_col_types = FALSE)
   supported_claims <- c(
     study_03_claim_ids(),
-    study_18_claim_ids()
+    study_18_claim_ids(),
+    study_44_claim_ids()
   )
   ready_claims <- claims |>
     dplyr::filter(.data$claim_id %in% supported_claims,
@@ -22,6 +24,7 @@ compute_wave3_bayes_factors <- function(claims_path = "data/derived/claims.csv",
       switch(claim$study_id,
              study_03 = compute_study_03_bayes_factors(claim = claim),
              study_18 = compute_study_18_bayes_factors(claim = claim),
+             study_44 = compute_study_44_bayes_factors(claim = claim),
              stop("No Wave 3 implementation for ",claim$claim_id,".",call. = FALSE)
              )
     }
