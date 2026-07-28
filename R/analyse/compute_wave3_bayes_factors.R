@@ -8,7 +8,8 @@ compute_wave3_bayes_factors <- function(claims_path = "data/derived/claims.csv",
   claims <- readr::read_csv(claims_path,show_col_types = FALSE)
   supported_claims <- study_03_claim_ids()
   ready_claims <- claims |>
-    dplyr::filter(.data$claim_id %in% supported_claims,.data$status == "ready",.data$in_scope)
+    dplyr::filter(.data$claim_id %in% supported_claims,
+                  .data$status == "ready")
 
   results <- purrr::map_dfr(
     seq_len(nrow(ready_claims)),
