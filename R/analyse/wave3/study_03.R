@@ -76,6 +76,7 @@ study_03_model_labels <- function(claim_id) {
 compute_study_03_bayes_factors <- function(claim, priors = NULL, iter = 100000) {
   data <- load_study_03_data()
   model <- fit_study_03_model(data)
+  wave3_check_assumptions(model, claim$claim_id)
   set.seed(123)
   result <- BFpack::BF(model, hypothesis = study_03_hypothesis(claim$claim_id), iter = iter)
   bf10 <- as.numeric(result$BFmatrix_confirmatory["H2", "H1"])

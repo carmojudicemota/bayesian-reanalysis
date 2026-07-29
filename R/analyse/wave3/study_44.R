@@ -124,6 +124,7 @@ study_44_model_labels <- function(claim_id) {
 compute_study_44_bayes_factors <- function(claim,priors = NULL,iter = 100000) {
   data <- load_study_44_data()
   model <- fit_study_44_model(data)
+  wave3_check_assumptions(model, claim$claim_id)
   hypothesis <- study_44_hypothesis(claim$claim_id)
   
   set.seed(123)

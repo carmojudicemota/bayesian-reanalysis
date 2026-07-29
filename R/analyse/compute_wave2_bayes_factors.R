@@ -78,6 +78,5 @@ compute_wave2_bayes_factors <- function(
     dplyr::n_distinct(results$claim_id)," claims from ",
     dplyr::n_distinct(results$study_id)," studies."
     )
-  
   invisible(results)
 }

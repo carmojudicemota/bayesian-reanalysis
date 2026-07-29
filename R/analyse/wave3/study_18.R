@@ -87,6 +87,7 @@ study_18_hypothesis <- function() {
 compute_study_18_bayes_factors <- function(claim,priors = NULL,iter = 100000) {
   data <- load_study_18_data()
   model <- fit_study_18_model(data)
+  wave3_check_assumptions(model, claim$claim_id)
   set.seed(123)
   
   result <- BFpack::BF(model,hypothesis = study_18_hypothesis(),iter = iter)
