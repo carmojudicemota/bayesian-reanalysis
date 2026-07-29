@@ -32,8 +32,6 @@ docs/*.html
 *.synctex.gz
 *.fls
 *.fdb_latexmk/data/raw/
-data/raw/
-
 # Local Ali source workbooks
 data/source/ali/*.xlsx
 data/derived/claims_draft.csv
