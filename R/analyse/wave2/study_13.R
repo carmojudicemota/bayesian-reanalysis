@@ -59,7 +59,7 @@ study_13_prior_grid <- function(priors) {
   grid
 }
 
-fit_study_13_model <- function(groups, rscale, seed = 2026) {
+fit_study_13_model <- function(groups, rscale, seed = 123) {
   RoBTT::RoBTT(
     x1 = groups$intervention,
     x2 = groups$control,
@@ -96,7 +96,7 @@ run_study_13_claim <- function(claim_id, priors) {
     
     message("Study 13: fitting ",claim_id," with ",prior_label," prior.")
     
-    fit <- fit_study_13_model(groups = groups,rscale = rscale,seed = 2026 + i)
+    fit <- fit_study_13_model(groups = groups,rscale = rscale,seed = 123 + i)
     fit_result <- extract_study_13_summary(fit)
     bf10 <- fit_result$bf10
     tibble(

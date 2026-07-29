@@ -108,7 +108,7 @@ study_43_priors <- function(focal_sd, include_focal) {
 }
 
 fit_study_43_models <- function(claim_id, prior_label, focal_sd, data = load_study_43_wave2_data(),
-                                iter = 6000, warmup = 2000, chains = 4, cores = 4, seed = 4300) {
+                                iter = 6000, warmup = 2000, chains = 4, cores = 4, seed = 123) {
   prepared <- study_43_model_data(data, claim_id)
   formulas <- study_43_formulas(prepared$nuisance_names)
   

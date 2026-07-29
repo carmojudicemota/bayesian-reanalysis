@@ -65,6 +65,7 @@ compute_factorial_model_pair_bfs <- function(
   prior_grid <- factorial_prior_grid(priors)
   
   purrr::map_dfr(seq_len(nrow(prior_grid)), function(i) {
+    set.seed(123 + i)
     prior_label <- prior_grid$prior_label[[i]]
     rscale <- as.numeric(prior_grid$value[[i]])
     

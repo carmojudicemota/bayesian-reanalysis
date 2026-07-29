@@ -113,7 +113,7 @@ compute_study_06_bayes_factors <- function(claim,priors) {
   purrr::map_dfr(
     seq_len(nrow(prior_grid)),
     function(i) {
-      
+      set.seed(123 + i)
       prior_label <-prior_grid$prior_label[[i]]
       fixed_scale <- as.numeric(prior_grid$value[[i]])
       null_bf <- BayesFactor::lmBF(formula = model_null,

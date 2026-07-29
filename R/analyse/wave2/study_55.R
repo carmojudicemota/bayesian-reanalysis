@@ -121,7 +121,7 @@ study_55_alt_priors <- function(rscale) {
   )
 }
 
-fit_study_55_null <- function(data, seed = 2055) {
+fit_study_55_null <- function(data, seed = 123) {
   formulas <- study_55_formulas()
   
   brms::brm(
@@ -242,7 +242,7 @@ run_study_55_bayes_factors <- function(
       alt_fit <- readRDS(alt_path)
     } else {
       message("Study 55: fitting ", prior_label, " alternative model.")
-      alt_fit <- fit_study_55_alt(data, rscale = rscale, seed = 2055 + i)
+      alt_fit <- fit_study_55_alt(data, rscale = rscale, seed = 123 + i)
       validate_study_55_fit(alt_fit, paste0(prior_label, " alternative model"))
       saveRDS(alt_fit, alt_path)
     }

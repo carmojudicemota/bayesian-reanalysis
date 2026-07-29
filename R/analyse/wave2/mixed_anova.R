@@ -77,7 +77,7 @@ compute_mixed_anova_model_pair <- function(
   purrr::map_dfr(
     seq_len(nrow(fixed_priors)),
     function(i) {
-      
+      set.seed(123 + i)
       prior_label <- fixed_priors$prior_label[i]
       fixed_scale <- as.numeric(fixed_priors$value[i])
       null_bf <- BayesFactor::lmBF(formula = model_null,
