@@ -72,3 +72,36 @@ wave3_row <- function(
     method = method
   )
 }
+
+
+wave3_manova_diagnostics <- function(model) {
+  resid <- stats::residuals(model)
+  shapiro_p <- apply(resid, 2, function(z) stats::shapiro.test(z)$p.value)
+  n <- nrow(resid)
+  box_m_p <- NA_real_
+  list(
+    n = n,
+    n_outcomes = ncol(resid),
+    n_location_parameters = nrow(stats::coef(model)),
+    fraction_b = nrow(stats::coef(model)) / n,
+    min_shapiro_p = min(shapiro_p),
+    shapiro_p = shapiro_p,
+    box_m_p = box_m_p
+  )
+}
+
+
+wave3_check_assumptions <- function(model, claim_id, min_shapiro = 0.001) {
+  d <- wave3_manova_diagnostics(model)
+  message(sprintf(
+    "%s: N=%d, outcomes=%d, fraction b~%.3f, min Shapiro p=%.4g",
+    claim_id, d$n, d$n_outcomes, d$fraction_b, d$min_shapiro_p
+  ))
+  if (d$min_shapiro_p < min_shapiro) {
+    warning(sprintf(
+      "%s: residual normality is doubtful (min Shapiro p=%.4g); consider the Student-t robustness fit.",
+      claim_id, d$min_shapiro_p
+    ), call. = FALSE)
+  }
+  invisible(d)
+}
