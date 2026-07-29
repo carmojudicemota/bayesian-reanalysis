@@ -86,3 +86,59 @@ study_40_diagnostics <- function(fit) {
     converged = max(rhat, na.rm = TRUE) < 1.01 && min(ess, na.rm = TRUE) > 400
   )
 }
+
+
+study_40_cache_path <- function() {
+  "outputs/intermediate/study_40_bayes_factors.csv"
+}
+
+
+run_study_40_bayes_factors <- function(cache_path = study_40_cache_path(), loading_scale = 0.5, seed = 123) {
+  data <- load_study_40_data()
+  fit7 <- fit_study_40_model_7(data, seed = seed, loading_scale = loading_scale)
+  fit8 <- fit_study_40_model_8(data, seed = seed + 1, loading_scale = loading_scale)
+  diag7 <- study_40_diagnostics(fit7)
+  diag8 <- study_40_diagnostics(fit8)
+  if (!diag7$converged || !diag8$converged) {
+    stop("Study 40 fits did not converge; not caching. rhat_max M7=", round(diag7$rhat_max, 4),
+         " M8=", round(diag8$rhat_max, 4), call. = FALSE)
+  }
+  comparison <- blavaan::blavCompare(fit7, fit8)
+  log_bf_7_8 <- as.numeric(comparison$bf[["bf"]])
+  result <- data.frame(
+    claim_id = "study_40_claim_01",
+    bf10 = exp(log_bf_7_8),
+    log_bf10 = log_bf_7_8,
+    rhat_max_m7 = diag7$rhat_max,
+    rhat_max_m8 = diag8$rhat_max,
+    loading_scale = loading_scale,
+    method = "blavaan_bgrowth_blavCompare",
+    generated_at = as.character(Sys.time()),
+    stringsAsFactors = FALSE
+  )
+  dir.create(dirname(cache_path), recursive = TRUE, showWarnings = FALSE)
+  utils::write.csv(result, cache_path, row.names = FALSE)
+  invisible(result)
+}
+
+
+compute_study_40_bayes_factors <- function(claim, priors = NULL, cache_path = study_40_cache_path()) {
+  if (!file.exists(cache_path)) {
+    stop("Study 40 cache not found at ", cache_path, ". Run run_study_40_bayes_factors() first.", call. = FALSE)
+  }
+  cached <- utils::read.csv(cache_path, stringsAsFactors = FALSE)
+  row <- cached[cached$claim_id == claim$claim_id, ]
+  if (nrow(row) != 1) {
+    stop("No cached Study 40 result for ", claim$claim_id, ".", call. = FALSE)
+  }
+  wave3_row(
+    claim = claim,
+    bf10 = row$bf10,
+    model_null = "Model 8: loadings constrained equal across groups",
+    model_alt = "Model 7: group-specific post-intervention loadings",
+    bf_family = "sem_marginal_likelihood",
+    prior_family = "blavaan_default",
+    method = "blavaan_bgrowth_blavCompare",
+    prior_label = "primary"
+  )
+}
