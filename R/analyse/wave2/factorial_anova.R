@@ -68,7 +68,6 @@ compute_factorial_model_pair_bfs <- function(
     set.seed(123 + i)
     prior_label <- prior_grid$prior_label[[i]]
     rscale <- as.numeric(prior_grid$value[[i]])
-    
     all_models <- BayesFactor::generalTestBF(
       formula = formula,
       data = data,
@@ -126,3 +125,7 @@ compute_factorial_additive_main_effect_bfs <- function(claim, data, priors) {
     model_alt = "A + B"
   )
 }
+
+
+
+

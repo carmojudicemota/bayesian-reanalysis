@@ -101,5 +101,78 @@ prepare_study_39_rank_data <- function(data) {
   )
 }
 
+study_39_rtnorm <- function(mean, sd, lower, upper) {
+  lo <- stats::pnorm(lower, mean, sd)
+  hi <- stats::pnorm(upper, mean, sd)
+  if (hi - lo < 1e-12) return(min(max(mean, lower), upper))
+  stats::qnorm(stats::runif(1, lo, hi), mean, sd)
+}
 
+study_39_update_latent <- function(values, z, z_other, rho) {
+  sdev <- sqrt(1 - rho^2)
+  for (i in seq_along(values)) {
+    smaller <- z[values < values[i]]
+    larger <- z[values > values[i]]
+    lower <- if (length(smaller)) max(smaller) else -Inf
+    upper <- if (length(larger)) min(larger) else Inf
+    z[i] <- study_39_rtnorm(rho * z_other[i], sdev, lower, upper)
+  }
+  z
+}
+
+study_39_update_rho <- function(zx, zy, rho, kappa, step = 0.3) {
+  n <- length(zx)
+  sxy <- sum(zx * zy)
+  sxx <- sum(zx^2)
+  syy <- sum(zy^2)
+  target <- function(r) {
+    -n / 2 * log(1 - r^2) - (sxx - 2 * r * sxy + syy) / (2 * (1 - r^2)) +
+      (1 / kappa - 1) * log(1 - r^2) + log(1 - r^2)
+  }
+  proposal <- tanh(atanh(rho) + stats::rnorm(1, 0, step))
+  if (log(stats::runif(1)) < target(proposal) - target(rho)) proposal else rho
+}
+
+study_39_spearman_samples <- function(x, y, n_samples = 5000, n_burnin = 1000, kappa = 1) {
+  n <- length(x)
+  zx <- stats::qnorm(rank(x, ties.method = "average") / (n + 1))
+  zy <- stats::qnorm(rank(y, ties.method = "average") / (n + 1))
+  rho <- stats::cor(zx, zy)
+  draws <- numeric(n_samples)
+  for (t in seq_len(n_burnin + n_samples)) {
+    zx <- study_39_update_latent(x, zx, zy, rho)
+    zy <- study_39_update_latent(y, zy, zx, rho)
+    rho <- study_39_update_rho(zx, zy, rho, kappa)
+    if (t > n_burnin) draws[t - n_burnin] <- rho
+  }
+  draws
+}
+
+study_39_prior_density_zero <- function(kappa) {
+  a <- 1 / kappa
+  0.5 * (0.25)^(a - 1) / beta(a, a)
+}
+
+study_39_savage_dickey <- function(draws, prior_density_zero) {
+  fit <- logspline::logspline(draws, lbound = -1, ubound = 1)
+  prior_density_zero / logspline::dlogspline(0, fit)
+}
+
+compute_study_39_bayes_factors <- function(claim, priors = NULL, kappa = 1,
+                                           n_samples = 5000, n_burnin = 1000) {
+  data <- load_study_39_data(claim$claim_id)
+  set.seed(123)
+  draws <- study_39_spearman_samples(data$x, data$y, n_samples, n_burnin, kappa)
+  bf10 <- study_39_savage_dickey(draws, study_39_prior_density_zero(kappa))
+  wave3_row(
+    claim = claim,
+    bf10 = bf10,
+    model_null = "latent rho = 0",
+    model_alt = "latent rho != 0",
+    bf_family = "rank_latent_normal",
+    prior_family = "stretched_beta",
+    method = "latent_normal_spearman_gibbs",
+    prior_label = "primary"
+  )
+}
 

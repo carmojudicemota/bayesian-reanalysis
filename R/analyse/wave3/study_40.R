@@ -93,6 +93,28 @@ study_40_cache_path <- function() {
 }
 
 
+study_40_write_cache <- function(fit7, fit8, loading_scale = 0.5, cache_path = study_40_cache_path()) {
+  diag7 <- study_40_diagnostics(fit7)
+  diag8 <- study_40_diagnostics(fit8)
+  log_bf_7_8 <- as.numeric(lavaan::fitMeasures(fit7, "margloglik") -
+                             lavaan::fitMeasures(fit8, "margloglik"))
+  result <- data.frame(
+    claim_id = "study_40_claim_01",
+    bf10 = exp(log_bf_7_8),
+    log_bf10 = log_bf_7_8,
+    rhat_max_m7 = diag7$rhat_max,
+    rhat_max_m8 = diag8$rhat_max,
+    loading_scale = loading_scale,
+    method = "blavaan_bgrowth_margloglik",
+    generated_at = as.character(Sys.time()),
+    stringsAsFactors = FALSE
+  )
+  dir.create(dirname(cache_path), recursive = TRUE, showWarnings = FALSE)
+  utils::write.csv(result, cache_path, row.names = FALSE)
+  invisible(result)
+}
+
+
 run_study_40_bayes_factors <- function(cache_path = study_40_cache_path(), loading_scale = 0.5, seed = 123) {
   data <- load_study_40_data()
   fit7 <- fit_study_40_model_7(data, seed = seed, loading_scale = loading_scale)
@@ -103,22 +125,16 @@ run_study_40_bayes_factors <- function(cache_path = study_40_cache_path(), loadi
     stop("Study 40 fits did not converge; not caching. rhat_max M7=", round(diag7$rhat_max, 4),
          " M8=", round(diag8$rhat_max, 4), call. = FALSE)
   }
-  comparison <- blavaan::blavCompare(fit7, fit8)
-  log_bf_7_8 <- as.numeric(comparison$bf[["bf"]])
-  result <- data.frame(
-    claim_id = "study_40_claim_01",
-    bf10 = exp(log_bf_7_8),
-    log_bf10 = log_bf_7_8,
-    rhat_max_m7 = diag7$rhat_max,
-    rhat_max_m8 = diag8$rhat_max,
-    loading_scale = loading_scale,
-    method = "blavaan_bgrowth_blavCompare",
-    generated_at = as.character(Sys.time()),
-    stringsAsFactors = FALSE
-  )
-  dir.create(dirname(cache_path), recursive = TRUE, showWarnings = FALSE)
-  utils::write.csv(result, cache_path, row.names = FALSE)
-  invisible(result)
+  saveRDS(fit7, file.path(dirname(cache_path), "study_40_fit7.rds"))
+  saveRDS(fit8, file.path(dirname(cache_path), "study_40_fit8.rds"))
+  study_40_write_cache(fit7, fit8, loading_scale, cache_path)
+}
+
+
+study_40_cache_from_saved <- function(fit7_path = "outputs/intermediate/study_40_fit7.rds",
+                                      fit8_path = "outputs/intermediate/study_40_fit8.rds",
+                                      loading_scale = 0.5, cache_path = study_40_cache_path()) {
+  study_40_write_cache(readRDS(fit7_path), readRDS(fit8_path), loading_scale, cache_path)
 }
 
 
