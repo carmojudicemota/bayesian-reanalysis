@@ -15,7 +15,8 @@ compute_wave3_bayes_factors <- function(claims_path = "data/derived/claims.csv",
     study_18_claim_ids(),
     study_44_claim_ids(),
     study_20_claim_ids(),
-    study_40_claim_ids()
+    study_40_claim_ids(),
+    study_39_claim_ids()
   )
   ready_claims <- claims |>
     dplyr::filter(.data$claim_id %in% supported_claims,
@@ -31,6 +32,7 @@ compute_wave3_bayes_factors <- function(claims_path = "data/derived/claims.csv",
              study_44 = compute_study_44_bayes_factors(claim = claim),
              study_20 = compute_study_20_bayes_factors(claim = claim),
              study_40 = compute_study_40_bayes_factors(claim = claim),
+             study_39 = compute_study_39_bayes_factors(claim = claim, n_samples = 20000, n_burnin = 5000),
              stop("No Wave 3 implementation for ",claim$claim_id,".",call. = FALSE)
              )
     }
