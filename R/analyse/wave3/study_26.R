@@ -82,3 +82,5 @@ compute_study_26_bayes_factors <- function(claim, priors = NULL, n_samples = 500
     )
   })
 }
+
+
