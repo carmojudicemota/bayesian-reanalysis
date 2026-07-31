@@ -1,7 +1,7 @@
 concordance_cell,claim_count,claim_proportion,study_weighted_proportion,studies_with_cell
-Significant + H1,29,0.6590909090909091,0.6851851851851852,21
-Significant + inconclusive,6,0.13636363636363635,0.12962962962962962,6
+Significant + H1,32,0.6808510638297872,0.7068965517241379,23
+Significant + inconclusive,6,0.1276595744680851,0.1206896551724138,6
 Significant + H0,0,0,0,0
-Nonsignificant + H0,6,0.13636363636363635,0.1111111111111111,5
-Nonsignificant + inconclusive,3,0.06818181818181818,0.07407407407407407,3
+Nonsignificant + H0,6,0.1276595744680851,0.10344827586206898,5
+Nonsignificant + inconclusive,3,0.06382978723404255,0.0689655172413793,3
 Nonsignificant + H1,0,0,0,0
