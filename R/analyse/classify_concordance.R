@@ -197,28 +197,56 @@ build_detailed_rank_table <- function(claim_level) {
 }
 
 plot_detailed_rank <- function(detailed_rank, output_path) {
-  bf_gridlines <- log10(c(100, 30, 10, 3, 1, 1 / 3, 1 / 10, 1 / 30, 1 / 100))
+  tr <- function(x) asinh(x)
+  brks <- c(-5, -2, -1, 0, 1, 2, 5, 10, 30, 90, 220)
   df <- detailed_rank |> mutate(claim_id = fct_reorder(claim_id, log10_bf10))
-  
-  p <- ggplot(df, aes(x = log10_bf10, y = claim_id)) +
-    geom_vline(xintercept = bf_gridlines, colour = "grey85", linewidth = 0.3) +
+
+  p <- ggplot(df, aes(x = tr(log10_bf10), y = claim_id)) +
+    geom_vline(xintercept = tr(log10(c(1 / 3, 3))), linetype = "dashed", colour = "grey55", linewidth = 0.3) +
     geom_vline(xintercept = 0, colour = "black", linewidth = 0.4) +
     geom_point(aes(colour = concordance_status), size = 3) +
     geom_text(aes(label = p_band), hjust = -0.15, size = 2.6, colour = "grey30") +
+    scale_x_continuous(breaks = tr(brks), labels = brks) +
     scale_colour_manual(values = c("Concordant" = "#2b8a3e", "Inconclusive" = "#868e96", "Discordant" = "#e03131")) +
     labs(
-      x = expression(log[10](BF[10]) ~ "(primary prior)"), y = NULL, colour = "Concordance status",
+      x = expression(log[10](BF[10]) ~ "(asinh scale; primary prior)"), y = NULL, colour = "Concordance status",
       title = "Detailed evidence rank",
       subtitle = paste0(
-        "Claims ranked by Bayes-factor strength (Jeffreys 1961 categories); ",
-        "label shows the p-value band (Wasserman 2004); colour shows six-cell concordance status"
+        "Ranked by Bayes-factor strength (Jeffreys 1961 categories); asinh axis keeps extreme and ",
+        "near-threshold claims legible; label shows the p-value band; colour shows six-cell status"
       )
     ) +
     theme_minimal(base_size = 11) +
     theme(panel.grid = element_blank())
-  
+
   dir.create(dirname(output_path), recursive = TRUE, showWarnings = FALSE)
   ggsave(filename = output_path, plot = p, width = 9, height = max(4, 0.35 * nrow(df) + 1.5), dpi = 300)
+  invisible(p)
+}
+
+plot_detailed_rank_zoom <- function(detailed_rank, output_path, lim = 0.8) {
+  df <- detailed_rank |>
+    filter(is.finite(log10_bf10), abs(log10_bf10) <= lim) |>
+    mutate(claim_id = fct_reorder(claim_id, log10_bf10))
+
+  p <- ggplot(df, aes(x = log10_bf10, y = claim_id)) +
+    annotate("rect", xmin = log10(1 / 3), xmax = log10(3), ymin = -Inf, ymax = Inf, fill = "#9E9E9E", alpha = 0.12) +
+    geom_vline(xintercept = c(log10(1 / 3), log10(3)), linetype = "dashed", linewidth = 0.35) +
+    geom_vline(xintercept = 0, colour = "black", linewidth = 0.4) +
+    geom_point(aes(colour = concordance_status), size = 3) +
+    geom_text(aes(label = p_band), hjust = -0.2, size = 2.6, colour = "grey30") +
+    scale_colour_manual(values = c("Concordant" = "#2b8a3e", "Inconclusive" = "#868e96", "Discordant" = "#e03131")) +
+    coord_cartesian(xlim = c(-lim - 0.15, lim + 0.15)) +
+    labs(
+      x = expression(log[10](BF[10]) ~ "(primary prior)"), y = NULL, colour = "Concordance status",
+      title = "Detailed evidence rank — problematic zone",
+      subtitle = paste0("Only claims with |log10 BF10| <= ", lim, ", where the six-cell decision is actually in play")
+    ) +
+    theme_minimal(base_size = 11) +
+    theme(panel.grid = element_blank())
+
+  dir.create(dirname(output_path), recursive = TRUE, showWarnings = FALSE)
+  ggsave(filename = output_path, plot = p, width = 8, height = max(3, 0.42 * nrow(df) + 1.2), dpi = 300)
   invisible(p)
 }
 
@@ -230,13 +258,15 @@ build_concordance_outputs <- function(
     summary_output_path = "outputs/tables/concordance_summary.csv",
     figure_output_path = "outputs/figures/evidence_concordance_plane.png",
     detailed_rank_figure_path = "outputs/figures/detailed_evidence_rank.png",
+    detailed_rank_zoom_figure_path = "outputs/figures/detailed_evidence_rank_zoom.png",
     remove_legacy_outputs = TRUE
 ) {
   if (remove_legacy_outputs) {
     legacy_paths <- c(
       "outputs/tables/agreement_rank.csv", "outputs/figures/agreement_rank.png",
       "outputs/figures/evidence_plane.png", "outputs/tables/prior_sensitivity.csv",
-      "outputs/tables/detailed_evidence_rank.csv"
+      "outputs/tables/detailed_evidence_rank.csv",
+      "outputs/figures/evidence_concordance_plane.png"
     )
     unlink(legacy_paths[file.exists(legacy_paths)])
   }
@@ -263,8 +293,8 @@ build_concordance_outputs <- function(
   write_csv(claim_level, claim_output_path, na = "")
   write_csv(concordance_summary, summary_output_path, na = "")
   
-  plot_evidence_plane(claim_level = claim_level, alpha = alpha, k = k, output_path = figure_output_path)
   plot_detailed_rank(detailed_rank = detailed_rank, output_path = detailed_rank_figure_path)
+  plot_detailed_rank_zoom(detailed_rank = detailed_rank, output_path = detailed_rank_zoom_figure_path)
   
   message(
     "Created concordance outputs for ", nrow(claim_level), " claims from ",
