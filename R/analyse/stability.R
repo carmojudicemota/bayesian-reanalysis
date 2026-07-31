@@ -233,7 +233,7 @@ plot_stability_forest <- function(table, out_png = "outputs/figures/stability_fo
     ggplot2::annotate("rect", xmin = tr(-threshold), xmax = tr(threshold), ymin = -Inf, ymax = Inf, fill = "#9E9E9E", alpha = 0.15) +
     ggplot2::geom_vline(xintercept = 0, linewidth = 0.3) +
     ggplot2::geom_vline(xintercept = c(tr(-threshold), tr(threshold)), linetype = "dashed", linewidth = 0.3) +
-    ggplot2::geom_errorbarh(ggplot2::aes(xmin = tr(.data$lower), xmax = tr(.data$upper)), height = 0.25, linewidth = 0.5) +
+    ggplot2::geom_errorbar(ggplot2::aes(xmin = tr(.data$lower), xmax = tr(.data$upper)), orientation = "y", width = 0.25, linewidth = 0.5) +    
     ggplot2::geom_point(size = 2) +
     ggplot2::scale_x_continuous(breaks = tr(brks), labels = brks) +
     ggplot2::scale_colour_manual(values = verdict_colours, name = "Stability verdict") +
