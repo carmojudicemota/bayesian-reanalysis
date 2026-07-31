@@ -139,19 +139,27 @@ harvest_study_40_rhat <- function(cache = "outputs/intermediate/study_40_bayes_f
   max(c(row$rhat_max_m7, row$rhat_max_m8), na.rm = TRUE)
 }
 
-harvest_bridge_span <- function(study_id, claim_id) {
-  cache <- file.path("outputs/intermediate", paste0(study_id, "_bayes_factors.csv"))
-  if (!file.exists(cache)) return(NA_real_)
+harvest_bridge_stat <- function(study_id, claim_id, col) {
+  candidates <- c(
+    file.path("outputs/intermediate", paste0(study_id, "_bayes_factors.csv")),
+    file.path("outputs/tables",paste0(study_id, "_bayes_factors.csv")),
+    file.path("outputs/tables",paste0(study_id, "_full_glmm_bayes_factors.csv"))
+  )
+  cache <- candidates[file.exists(candidates)][1]
+  if (is.na(cache)) return(NA_real_)
   tab <- utils::read.csv(cache, stringsAsFactors = FALSE)
-  if (!"bridge_span_log10" %in% names(tab)) return(NA_real_)
-  hit <- tab[tab$claim_id == claim_id, "bridge_span_log10"]
-  if (length(hit) < 1) NA_real_ else as.numeric(hit[[1]])
+  if (!col %in% names(tab)) return(NA_real_)
+  row <- tab[tab$claim_id == claim_id, , drop = FALSE]
+  if ("prior_label" %in% names(row) && any(row$prior_label == "primary", na.rm = TRUE)) {
+    row <- row[row$prior_label == "primary", , drop = FALSE]
+  }
+  v <- suppressWarnings(as.numeric(row[[col]][1]))
+  if (length(v) < 1) NA_real_ else v
 }
 
 harvest_pipeline_stability <- function(results_csv = "outputs/tables/bayes_factor_results.csv") {
   if (!file.exists(results_csv)) return(tibble::tibble())
-  res <- readr::read_csv(results_csv, show_col_types = FALSE)
-  res <- res |>
+  res <- readr::read_csv(results_csv, show_col_types = FALSE) |>
     dplyr::mutate(source = stability_source_of(.data$method)) |>
     dplyr::filter(!is.na(.data$source), .data$source != "reseed_gibbs")
   if ("prior_label" %in% names(res)) {
@@ -167,16 +175,18 @@ harvest_pipeline_stability <- function(results_csv = "outputs/tables/bayes_facto
     dplyr::rowwise() |>
     dplyr::mutate(
       central = .data$log10_bf10,
+      bridge_sd_cache = if (.data$source == "bridge_sampling")
+        harvest_bridge_stat(.data$study_id, .data$claim_id, "bridge_sd_log10") else NA_real_,
+      bridge_span_log10 = if (.data$source == "bridge_sampling")
+        harvest_bridge_stat(.data$study_id, .data$claim_id, "bridge_span_log10") else NA_real_,
       dispersion_log10 = dplyr::case_when(
         .data$source == "montecarlo_bayesfactor" ~ as.numeric(.data$bf_error) / log(10),
-        .data$source == "bridge_sampling" ~ as.numeric(.data$bf_error),
+        .data$source == "bridge_sampling" ~ dplyr::coalesce(as.numeric(.data$bf_error), bridge_sd_cache),
         .data$source == "analytic" ~ 0,
         TRUE ~ NA_real_
       ),
       mcmc_rhat = dplyr::if_else(.data$study_id == "study_40", rhat40, NA_real_),
       converged = dplyr::if_else(.data$study_id == "study_40", !is.na(rhat40) && rhat40 < 1.01, TRUE),
-      bridge_span_log10 = if (.data$source == "bridge_sampling")
-        harvest_bridge_span(.data$study_id, .data$claim_id) else NA_real_,
       lower = dplyr::if_else(is.na(.data$dispersion_log10), .data$central, .data$central - 2 * .data$dispersion_log10),
       upper = dplyr::if_else(is.na(.data$dispersion_log10), .data$central, .data$central + 2 * .data$dispersion_log10),
       n_seeds = NA_integer_
@@ -185,7 +195,6 @@ harvest_pipeline_stability <- function(results_csv = "outputs/tables/bayes_facto
     dplyr::select("claim_id", "study_id", "source", "n_seeds", "central", "lower", "upper",
                   "dispersion_log10", "mcmc_rhat", "converged", "bridge_span_log10")
 }
-
 build_stability_table <- function(reseed_summary, harvested,
                                   threshold = log10(3), magnitude_range_limit = 1,
                                   near_threshold_margin = 0.1) {
