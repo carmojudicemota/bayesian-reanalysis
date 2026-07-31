@@ -158,21 +158,23 @@ study_39_savage_dickey <- function(draws, prior_density_zero) {
   prior_density_zero / logspline::dlogspline(0, fit)
 }
 
-compute_study_39_bayes_factors <- function(claim, priors = NULL, kappa = 1,
-                                           n_samples = 5000, n_burnin = 1000) {
+compute_study_39_bayes_factors <- function(claim, priors = NULL, n_samples = 20000, n_burnin = 5000) {
   data <- load_study_39_data(claim$claim_id)
-  set.seed(123)
-  draws <- study_39_spearman_samples(data$x, data$y, n_samples, n_burnin, kappa)
-  bf10 <- study_39_savage_dickey(draws, study_39_prior_density_zero(kappa))
-  wave3_row(
-    claim = claim,
-    bf10 = bf10,
-    model_null = "latent rho = 0",
-    model_alt = "latent rho != 0",
-    bf_family = "rank_latent_normal",
-    prior_family = "stretched_beta",
-    method = "latent_normal_spearman_gibbs",
-    prior_label = "primary"
-  )
+  kappas <- c(narrow = 0.5, primary = 1, wide = 2)
+  purrr::map_dfr(names(kappas), function(lbl) {
+    kappa <- kappas[[lbl]]
+    set.seed(123)
+    draws <- study_39_spearman_samples(data$x, data$y, n_samples, n_burnin, kappa)
+    wave3_row(
+      claim = claim,
+      bf10 = study_39_savage_dickey(draws, study_39_prior_density_zero(kappa)),
+      model_null = "latent rho = 0",
+      model_alt = "latent rho != 0",
+      bf_family = "rank_latent_normal",
+      prior_family = "stretched_beta",
+      method = "latent_normal_spearman_gibbs",
+      prior_label = lbl
+    )
+  })
 }
 
