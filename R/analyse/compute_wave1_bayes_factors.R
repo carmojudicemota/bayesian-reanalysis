@@ -5,7 +5,7 @@ library(BayesFactor)
 
 compute_wave1_bayes_factors <- function(
     claims_path = "data/derived/claims.csv",
-    priors_path = "config/priors.csv",
+    priors_path = "config/priors_wave1.csv",
     output_path = "outputs/tables/bayes_factor_results_wave1.csv"
 ) {
   claims <- read_csv(claims_path, show_col_types = FALSE)
@@ -132,23 +132,23 @@ compute_wave1_bayes_factors <- function(
 
   families_needed <- unique(wave1$bf_family)
   if (any(priors$rscale <= 0, na.rm = TRUE) || any(is.na(priors$rscale))) {
-    stop("config/priors.csv contains a missing or non-positive rscale.", call. = FALSE)
+    stop("config/priors_wave1.csv contains a missing or non-positive rscale.", call. = FALSE)
   }
   prior_dupes <- priors |>
     count(family, prior_label) |>
     filter(n > 1)
   if (nrow(prior_dupes) > 0) {
-    stop("Duplicate (family, prior_label) rows in config/priors.csv: ",
+    stop("Duplicate (family, prior_label) rows in config/priors_wave1.csv: ",
          paste(prior_dupes$family, prior_dupes$prior_label, sep = "/", collapse = ", "),
          call. = FALSE)
   }
   for (fam in families_needed) {
     if (!any(priors$family == fam)) {
-      stop("config/priors.csv has no priors for required family: ", fam, call. = FALSE)
+      stop("config/priors_wave1.csv has no priors for required family: ", fam, call. = FALSE)
     }
     n_primary <- sum(priors$family == fam & priors$prior_label == "primary")
     if (n_primary != 1) {
-      stop("Family ", fam, " must have exactly one primary prior in config/priors.csv; found ",
+      stop("Family ", fam, " must have exactly one primary prior in config/priors_wave1.csv; found ",
            n_primary, ".", call. = FALSE)
     }
   }
