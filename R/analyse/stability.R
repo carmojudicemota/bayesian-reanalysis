@@ -3,7 +3,6 @@ for (f in c("R/analyse/wave3/study_26.R", "R/analyse/wave3/study_39.R", "R/analy
   if (file.exists(f)) source(f)
 }
 
-
 stability_wave_of <- function(study_id) {
   wave2 <- c("study_06", "study_10", "study_13", "study_29", "study_35",
              "study_37", "study_43", "study_47", "study_55", "study_60")
@@ -31,7 +30,6 @@ stability_category <- function(x, threshold = log10(3)) {
   ifelse(x > threshold, "H1", ifelse(x < -threshold, "H0", "Inconclusive"))
 }
 
-
 stability_interval_distance <- function(lower, upper, threshold = log10(3)) {
   taus <- c(-threshold, threshold)
   mapply(function(lo, hi) {
@@ -41,7 +39,6 @@ stability_interval_distance <- function(lower, upper, threshold = log10(3)) {
     min(d)
   }, lower, upper)
 }
-
 
 stability_split_rhat <- function(chains) {
   n <- nrow(chains)
@@ -56,7 +53,6 @@ stability_split_rhat <- function(chains) {
   sqrt((((nn - 1) / nn) * w + b / nn) / w)
 }
 
-
 stability_reseed_samples <- function(label, bf_fun, seeds) {
   bf <- vapply(seeds, function(s) {
     set.seed(s)
@@ -64,7 +60,6 @@ stability_reseed_samples <- function(label, bf_fun, seeds) {
   }, numeric(1))
   tibble::tibble(label = label, seed = seeds, bf10 = bf, log10_bf10 = log10(bf))
 }
-
 
 stability_reseed_mixing <- function(draw_fun, seeds) {
   chains <- vapply(seeds, function(s) {
@@ -93,7 +88,6 @@ reseed_study_26 <- function(seeds = 1:20, mixing_seeds = 101:104,
   })
 }
 
-
 reseed_study_39 <- function(seeds = 1:20, mixing_seeds = 101:104,
                             n_samples = 20000, n_burnin = 5000, kappa = 1) {
   prior0 <- study_39_prior_density_zero(kappa)
@@ -110,7 +104,6 @@ reseed_study_39 <- function(seeds = 1:20, mixing_seeds = 101:104,
   })
 }
 
-
 reseed_study_45 <- function(seeds = 1:8, n_samples = 4000, n_burnin = 1000) {
   if (!exists("study_45_gibbs")) return(tibble::tibble())
   m <- load_study_45_data()
@@ -120,7 +113,6 @@ reseed_study_45 <- function(seeds = 1:8, n_samples = 4000, n_burnin = 1000) {
   }, seeds)
   dplyr::mutate(samples, study_id = "study_45", mcmc_rhat = NA_real_)
 }
-
 
 summarise_reseed <- function(samples) {
   if (nrow(samples) == 0) return(tibble::tibble())
@@ -141,13 +133,11 @@ summarise_reseed <- function(samples) {
     dplyr::rename(claim_id = "label")
 }
 
-
 harvest_study_40_rhat <- function(cache = "outputs/intermediate/study_40_bayes_factors.csv") {
   if (!file.exists(cache)) return(NA_real_)
   row <- utils::read.csv(cache, stringsAsFactors = FALSE)
   max(c(row$rhat_max_m7, row$rhat_max_m8), na.rm = TRUE)
 }
-
 
 harvest_bridge_span <- function(study_id, claim_id) {
   cache <- file.path("outputs/intermediate", paste0(study_id, "_bayes_factors.csv"))
@@ -157,7 +147,6 @@ harvest_bridge_span <- function(study_id, claim_id) {
   hit <- tab[tab$claim_id == claim_id, "bridge_span_log10"]
   if (length(hit) < 1) NA_real_ else as.numeric(hit[[1]])
 }
-
 
 harvest_pipeline_stability <- function(results_csv = "outputs/tables/bayes_factor_results.csv") {
   if (!file.exists(results_csv)) return(tibble::tibble())
@@ -185,21 +174,17 @@ harvest_pipeline_stability <- function(results_csv = "outputs/tables/bayes_facto
         TRUE ~ NA_real_
       ),
       mcmc_rhat = dplyr::if_else(.data$study_id == "study_40", rhat40, NA_real_),
-      converged = dplyr::if_else(.data$study_id == "study_40",
-                                 !is.na(rhat40) && rhat40 < 1.01, TRUE),
+      converged = dplyr::if_else(.data$study_id == "study_40", !is.na(rhat40) && rhat40 < 1.01, TRUE),
       bridge_span_log10 = if (.data$source == "bridge_sampling")
         harvest_bridge_span(.data$study_id, .data$claim_id) else NA_real_,
-      lower = dplyr::if_else(is.na(.data$dispersion_log10), .data$central,
-                             .data$central - 2 * .data$dispersion_log10),
-      upper = dplyr::if_else(is.na(.data$dispersion_log10), .data$central,
-                             .data$central + 2 * .data$dispersion_log10),
+      lower = dplyr::if_else(is.na(.data$dispersion_log10), .data$central, .data$central - 2 * .data$dispersion_log10),
+      upper = dplyr::if_else(is.na(.data$dispersion_log10), .data$central, .data$central + 2 * .data$dispersion_log10),
       n_seeds = NA_integer_
     ) |>
     dplyr::ungroup() |>
     dplyr::select("claim_id", "study_id", "source", "n_seeds", "central", "lower", "upper",
                   "dispersion_log10", "mcmc_rhat", "converged", "bridge_span_log10")
 }
-
 
 build_stability_table <- function(reseed_summary, harvested,
                                   threshold = log10(3), magnitude_range_limit = 1,
@@ -210,13 +195,10 @@ build_stability_table <- function(reseed_summary, harvested,
     dplyr::mutate(
       wave = stability_wave_of(.data$study_id),
       evidence_category = stability_category(.data$central, threshold),
-      distance_to_threshold = pmin(abs(.data$central - threshold),
-                                   abs(.data$central + threshold)),
+      distance_to_threshold = pmin(abs(.data$central - threshold), abs(.data$central + threshold)),
       minimum_distance_to_threshold = stability_interval_distance(.data$lower, .data$upper, threshold),
-      category_stable = stability_category(.data$lower, threshold) ==
-        stability_category(.data$upper, threshold),
-      magnitude_reliable = dplyr::if_else(is.na(.data$dispersion_log10), NA,
-                                          .data$dispersion_log10 < magnitude_range_limit),
+      category_stable = stability_category(.data$lower, threshold) == stability_category(.data$upper, threshold),
+      magnitude_reliable = dplyr::if_else(is.na(.data$dispersion_log10), NA, .data$dispersion_log10 < magnitude_range_limit),
       verdict = dplyr::case_when(
         .data$source == "analytic" ~ "Analytic (exact)",
         .data$source == "mcmc_convergence" & !.data$converged ~ "Unstable (no convergence)",
@@ -238,8 +220,7 @@ build_stability_table <- function(reseed_summary, harvested,
 }
 
 
-plot_stability_forest <- function(table, out_png = "outputs/figures/stability_forest.png",
-                                  threshold = log10(3)) {
+plot_stability_forest <- function(table, out_png = "outputs/figures/stability_forest.png", threshold = log10(3)) {
   tr <- function(x) asinh(x)
   brks <- c(-2, -threshold, 0, threshold, 1, 2, 5, 10, 30, 90)
   plot_df <- table |>
@@ -249,27 +230,23 @@ plot_stability_forest <- function(table, out_png = "outputs/figures/stability_fo
                        Unstable = "#67001F", `Unstable (no convergence)` = "#67001F")
   plot <- ggplot2::ggplot(plot_df, ggplot2::aes(tr(.data$central), .data$claim_id,
                                                 colour = .data$verdict)) +
-    ggplot2::annotate("rect", xmin = tr(-threshold), xmax = tr(threshold),
-                      ymin = -Inf, ymax = Inf, fill = "#9E9E9E", alpha = 0.15) +
+    ggplot2::annotate("rect", xmin = tr(-threshold), xmax = tr(threshold), ymin = -Inf, ymax = Inf, fill = "#9E9E9E", alpha = 0.15) +
     ggplot2::geom_vline(xintercept = 0, linewidth = 0.3) +
-    ggplot2::geom_vline(xintercept = c(tr(-threshold), tr(threshold)),
-                        linetype = "dashed", linewidth = 0.3) +
-    ggplot2::geom_errorbarh(ggplot2::aes(xmin = tr(.data$lower), xmax = tr(.data$upper)),
-                            height = 0.25, linewidth = 0.5) +
+    ggplot2::geom_vline(xintercept = c(tr(-threshold), tr(threshold)), linetype = "dashed", linewidth = 0.3) +
+    ggplot2::geom_errorbarh(ggplot2::aes(xmin = tr(.data$lower), xmax = tr(.data$upper)), height = 0.25, linewidth = 0.5) +
     ggplot2::geom_point(size = 2) +
     ggplot2::scale_x_continuous(breaks = tr(brks), labels = brks) +
     ggplot2::scale_colour_manual(values = verdict_colours, name = "Stability verdict") +
     ggplot2::facet_grid(rows = ggplot2::vars(.data$wave), scales = "free_y", space = "free_y") +
     ggplot2::labs(x = expression(log[10](BF[10]) ~ "(asinh scale; bars = numerical spread)"),
-                  y = NULL, title = "Project-wide Monte Carlo stability of Bayes factors",
-                  subtitle = "Grey band = inconclusive region; bars = ±2 SD, seed range, or bridge repetitions") +
+                  y = NULL, title = "Project-Wide Monte Carlo Stability of Bayes Factors",
+                  subtitle = "Grey Band = inconclusive region; Bars = ±2 SD, Seed Range, or Bridge Repetitions") +
     ggplot2::theme_minimal(base_size = 11) +
     ggplot2::theme(legend.position = "bottom", panel.grid.minor = ggplot2::element_blank())
   dir.create(dirname(out_png), recursive = TRUE, showWarnings = FALSE)
   ggplot2::ggsave(out_png, plot, width = 9, height = 2.5 + 0.4 * nrow(table), dpi = 150)
   invisible(plot)
 }
-
 
 plot_reseed_detail <- function(samples, table,
                                out_png = "outputs/figures/wave3_mc_stability.png",
@@ -292,8 +269,8 @@ plot_reseed_detail <- function(samples, table,
                         inherit.aes = FALSE, shape = 18, size = 3, colour = "black") +
     ggplot2::scale_colour_manual(values = verdict_colours, name = "Stability verdict") +
     ggplot2::labs(x = expression(log[10](BF[10]) ~ "across seeds"), y = NULL,
-                  title = "Wave 3 rank-based Bayes factors: per-seed reseeding",
-                  subtitle = "Diamonds = across-seed mean") +
+                  title = "Wave 3 Rank Based Bayes Factors: Per-Seed Reseeding",
+                  subtitle = "Diamonds = Across-Seed Mean") +
     ggplot2::theme_minimal(base_size = 11) +
     ggplot2::theme(legend.position = "bottom", panel.grid.minor = ggplot2::element_blank())
   dir.create(dirname(out_png), recursive = TRUE, showWarnings = FALSE)
@@ -302,17 +279,14 @@ plot_reseed_detail <- function(samples, table,
   invisible(plot)
 }
 
-
 run_project_stability <- function(results_csv = "outputs/tables/bayes_factor_results.csv",
                                   reseed_seeds = 1:20, seeds_45 = 1:8, mixing_seeds = 101:104,
                                   out_csv = "outputs/diagnostics/stability_table.csv",
                                   out_forest = "outputs/figures/stability_forest.png",
                                   out_reseed = "outputs/figures/wave3_mc_stability.png") {
-  samples <- dplyr::bind_rows(
-    reseed_study_26(reseed_seeds, mixing_seeds),
-    reseed_study_39(reseed_seeds, mixing_seeds),
-    reseed_study_45(seeds_45)
-  )
+  samples <- dplyr::bind_rows(reseed_study_26(reseed_seeds, mixing_seeds),
+                              reseed_study_39(reseed_seeds, mixing_seeds),
+                              reseed_study_45(seeds_45))
   reseed_summary <- summarise_reseed(samples)
   harvested <- harvest_pipeline_stability(results_csv)
   table <- build_stability_table(reseed_summary, harvested)
@@ -326,3 +300,5 @@ run_project_stability <- function(results_csv = "outputs/tables/bayes_factor_res
           sum(grepl("Unstable|unreliable", table$verdict)), " flagged.")
   list(samples = samples, table = table)
 }
+
+
