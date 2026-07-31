@@ -288,6 +288,19 @@ plot_reseed_detail <- function(samples, table,
   invisible(plot)
 }
 
+refresh_stability_forest <- function(table_csv = "outputs/diagnostics/stability_table.csv",
+                                     out_png = "outputs/figures/stability_forest.png") {
+  if (!file.exists(table_csv)) {
+    message("Stability table not found at ", table_csv, "; skipping forest refresh.")
+    return(invisible(NULL))
+  }
+  table <- readr::read_csv(table_csv, show_col_types = FALSE)
+  plot_stability_forest(table, out_png)
+  message("Refreshed stability_forest.png from stored table (", nrow(table), " claims); no reseed run.")
+  invisible(table)
+}
+
+
 run_project_stability <- function(results_csv = "outputs/tables/bayes_factor_results.csv",
                                   reseed_seeds = 1:20, seeds_45 = 1:8, mixing_seeds = 101:104,
                                   out_csv = "outputs/diagnostics/stability_table.csv",
