@@ -194,7 +194,9 @@ cl <- cl |>
   )
 
 bf <- bf |>
-  mutate(log10_bf10 = safe_numeric(log10_bf10), prior_label = as.character(prior_label))
+  mutate(bf10 = safe_numeric(bf10),
+         log10_bf10 = dplyr::coalesce(safe_numeric(log10_bf10), log10(bf10)),
+         prior_label = as.character(prior_label))
 
 dir.create("outputs/figures", recursive = TRUE, showWarnings = FALSE)
 
@@ -220,7 +222,6 @@ draw_dumbbell <- function(df, xlim, title, subtitle) {
     theme_project() + theme(axis.text.y = element_text(size = 7))
 }
 
-# ---- Evidence plane -----------------------------------------
 lab_df <- cl |> filter(concordance_status == "Inconclusive")
 
 evidence_plane_main <- ggplot(cl, aes(negative_log10_p, log10_bf10)) +
@@ -355,7 +356,8 @@ evidence_bars_zoom <- ggplot(bars_zoom_df, aes(claim, log10_bf10, fill = log10_b
   scale_fill_gradient2(low = "#B2182B", mid = "#EAEAEA", high = "#2166AC", midpoint = 0,
                        name = expression(log[10](BF[10]))) +
   labs(title = "Detailed Evidence Rank — threshold zoom",
-       subtitle = paste0("Claims with |log10 BF10| ≤ ", zoom_lim), x = NULL,
+       subtitle = bquote("Claims with " |log[10]~BF[10]| ≤ .(zoom_lim)), 
+       x = NULL,
        y = expression(log[10](BF[10]))) +
   theme_project() +
   theme(axis.text.y = element_text(size = 8))
@@ -395,7 +397,7 @@ full_df <- prior_wide |>
 
 prior_robustness <- draw_dumbbell(full_df, c(-6.4, 6.4),
   "Prior Robustness (all claims)",
-  "Single point = primary-only claim; axis capped at ±6")
+  "Axis capped at ±6")
 ggsave("outputs/figures/prior_robustness.png", prior_robustness,
        width = 9, height = 4 + 0.22 * nrow(full_df), dpi = 300, limitsize = FALSE)
 
@@ -406,8 +408,8 @@ zoom_df <- prior_wide |>
 zoom_xlim <- range(c(zoom_df$lo, zoom_df$hi), na.rm = TRUE) + c(-0.1, 0.1)
 
 prior_robustness_zoom <- draw_dumbbell(zoom_df, zoom_xlim,
-  "Prior Robustness — threshold zoom",
-  "Axis fitted to the near-threshold claims so each prior span (e.g. Study 37) is visible")
+  "Prior Robustness",
+  "Augmented Version")
 ggsave("outputs/figures/prior_robustness_zoom.png", prior_robustness_zoom,
        width = 9, height = 4 + 0.30 * nrow(zoom_df), dpi = 300, limitsize = FALSE)
 
@@ -431,6 +433,11 @@ prior_long <- prior_long |>
     by = "claim_id"
   )
 
+slope_labels <- prior_long |>
+  group_by(claim_id) |>
+  slice_max(order_by = as.integer(prior_label), n = 1, with_ties = FALSE) |>
+  ungroup()
+
 prior_slope_graph <- ggplot(prior_long, aes(prior_label, capped, group = claim_id)) +
   annotate("rect", xmin = -Inf, xmax = Inf, ymin = -thr_b, ymax = thr_b, fill = "#9E9E9E", alpha = 0.12) +
   geom_hline(yintercept = c(-thr_b, thr_b), linetype = "dashed", linewidth = 0.35) +
@@ -441,7 +448,11 @@ prior_slope_graph <- ggplot(prior_long, aes(prior_label, capped, group = claim_i
                       labels = c(`FALSE` = "Category stable", `TRUE` = "Category changes")) +
   scale_fill_manual(values = prior_cols, name = "Prior") +
   scale_x_discrete(labels = c(narrow = "Narrow", primary = "Primary", wide = "Wide")) +
-  coord_cartesian(ylim = c(-6.4, 6.4)) +
+  ggrepel::geom_text_repel(data = slope_labels, aes(label = short_claim(claim_id)),
+                           size = 2.4, direction = "y", hjust = 0, nudge_x = 0.18,
+                           segment.size = 0.2, segment.colour = "grey70",
+                           max.overlaps = Inf, show.legend = FALSE) +
+  coord_cartesian(ylim = c(-6.4, 6.4), clip = "off") +
   labs(title = "Prior Slope Graph",
        subtitle = "Movement Across the Prior Grid; Axis Capped at ±6",
        x = NULL, y = expression(log[10](BF[10]))) +
@@ -453,6 +464,10 @@ slope_zoom_lim <- 1.0
 prim_lookup <- prior_long |> filter(prior_label == "primary") |> distinct(claim_id, prim = log10_bf10)
 slope_zoom_df <- prior_long |> left_join(prim_lookup, by = "claim_id") |> filter(abs(prim) <= slope_zoom_lim)
 slope_ylim <- range(slope_zoom_df$log10_bf10, na.rm = TRUE) + c(-0.1, 0.1)
+slope_zoom_labels <- slope_zoom_df |>
+  group_by(claim_id) |>
+  slice_max(order_by = as.integer(prior_label), n = 1, with_ties = FALSE) |>
+  ungroup()
 
 prior_slope_graph_zoom <- ggplot(slope_zoom_df, aes(prior_label, log10_bf10, group = claim_id)) +
   annotate("rect", xmin = -Inf, xmax = Inf, ymin = -thr_b, ymax = thr_b, fill = "#9E9E9E", alpha = 0.12) +
@@ -464,9 +479,13 @@ prior_slope_graph_zoom <- ggplot(slope_zoom_df, aes(prior_label, log10_bf10, gro
                       labels = c(`FALSE` = "Category stable", `TRUE` = "Category changes")) +
   scale_fill_manual(values = prior_cols, name = "Prior") +
   scale_x_discrete(labels = c(narrow = "Narrow", primary = "Primary", wide = "Wide")) +
-  coord_cartesian(ylim = slope_ylim) +
+  ggrepel::geom_text_repel(data = slope_zoom_labels, aes(label = short_claim(claim_id)),
+                           size = 2.4, direction = "y", hjust = 0, nudge_x = 0.18,
+                           segment.size = 0.2, segment.colour = "grey70",
+                           max.overlaps = Inf, show.legend = FALSE) +
+  coord_cartesian(ylim = slope_ylim, clip = "off") +
   labs(title = "Prior Slope Graph — threshold zoom",
-       subtitle = paste0("Claims with |log10 BF10| ≤ ", slope_zoom_lim, "; axis fitted to the data"),
+       subtitle = bquote("Claims with " |log[10]~BF[10]| ≤ .(slope_zoom_lim) ~ "; axis fitted to the data")
        x = NULL, y = expression(log[10](BF[10]))) +
   theme_project()
 
@@ -524,34 +543,6 @@ ggsave("outputs/figures/diverging_jeffreys_grades_by_family.png", diverging_jeff
        width = 10, height = 4 + 0.35 * length(family_order), dpi = 300, limitsize = FALSE)
 
 
-pval_grid <- tibble(p = 10^seq(-6, log10(1 / e_const - 1e-4), length.out = 400)) |>
-  mutate(sbb_bf10 = 1 / (-e_const * p * log(p)))
-claim_pp <- cl |>
-  filter(is.finite(p_value), p_value > 0, is.finite(log10_bf10)) |>
-  mutate(bf10 = 10^log10_bf10)
-
-pvalue_calibration <- ggplot() +
-  geom_hline(yintercept = c(1 / 3, 3), linetype = "dashed", colour = "grey40") +
-  geom_vline(xintercept = c(.001, .01, .05), linetype = "dotted", colour = "grey65") +
-  geom_line(data = pval_grid, aes(p, sbb_bf10), linewidth = 0.9, colour = "#08306B") +
-  geom_point(data = claim_pp, aes(p_value, bf10, colour = concordance_status), size = 2.4) +
-  annotate("text", x = 5e-4, y = 1.5, label = "SBB ceiling: most a p-value alone can license",
-           size = 2.7, hjust = 0, colour = "#08306B") +
-  scale_x_log10(breaks = c(1e-5, 1e-4, 1e-3, 1e-2, .05, 1),
-                labels = c("1e-5", "1e-4", "0.001", "0.01", "0.05", "1"),
-                limits = c(1e-6, 1), oob = scales::squish) +
-  scale_y_log10(breaks = c(1/30, 1/3, 1, 3, 10, 100, 1e4, 1e10),
-                labels = c("1/30", "1/3", "1", "3", "10", "100", "1e4", "1e10"),
-                limits = c(1e-2, 1e12), oob = scales::squish) +
-  annotation_logticks(sides = "bl") +
-  scale_colour_manual(values = status_cols, name = NULL, drop = FALSE) +
-  labs(title = "P-value calibration (Sellke–Bayarri–Berger)",
-       subtitle = "Line = maximum BF10 a p-value licenses; points above it are model-driven",
-       x = "p-value (log scale)", y = expression(BF[10] ~ "(log scale)")) +
-  theme_project()
-
-ggsave("outputs/figures/pvalue_calibration.png", pvalue_calibration, width = 9, height = 6, dpi = 300)
-
 invisible(list(
   evidence_plane = evidence_plane,
   concordance = concordance_plot,
@@ -561,14 +552,10 @@ invisible(list(
   prior_robustness_zoom = prior_robustness_zoom,
   prior_slope_graph = prior_slope_graph,
   prior_slope_graph_zoom = prior_slope_graph_zoom,
-  pvalue_calibration = pvalue_calibration,
   diverging_jeffreys_grades_by_family = diverging_jeffreys_by_family
 ))
 
 
 build_all_figures <- function() {
   plot_evidence_plan()
-  plot_concordace_squares()
-  plot_prior_sensitivity()
-  plot_evidence_grid()
 }
