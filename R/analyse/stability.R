@@ -231,7 +231,7 @@ build_stability_table <- function(reseed_summary, harvested,
 
 plot_stability_forest <- function(table, out_png = "outputs/figures/stability_forest.png", threshold = log10(3)) {
   tr <- function(x) asinh(x)
-  brks <- c(-2, -threshold, 0, threshold, 1, 2, 5, 10, 30, 90)
+  brks <- c(-5, -2, -1, 0, 1, 2, 5, 10, 30, 90)
   plot_df <- table |>
     dplyr::mutate(claim_id = factor(.data$claim_id, levels = rev(unique(.data$claim_id))))
   verdict_colours <- c(Stable = "#2166AC", `Analytic (exact)` = "#4393C3",
