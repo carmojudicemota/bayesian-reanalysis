@@ -36,7 +36,6 @@ manova_robust_spec <- function(claim_id) {
   )
 }
 
-
 manova_robust_claim_ids <- function() {
   c("study_03_claim_01", "study_03_claim_02", "study_18_claim_01",
     "study_44_claim_01", "study_44_claim_02")
@@ -47,7 +46,6 @@ manova_robust_standardize <- function(data, outcomes) {
   for (o in outcomes) data[[o]] <- as.numeric(scale(data[[o]]))
   data
 }
-
 
 fit_manova_robust <- function(data, outcomes, rhs, focal_scale = 0.5, seed = 123,
                               family = brms::student(),
@@ -74,7 +72,6 @@ fit_manova_robust <- function(data, outcomes, rhs, focal_scale = 0.5, seed = 123
   )
 }
 
-
 bridge_manova_robust <- function(full_fit, null_fit, repetitions = 5L, cores = 1L) {
   estimates <- vapply(seq_len(repetitions), function(i) {
     full_bridge <- brms::bridge_sampler(full_fit, silent = TRUE, cores = cores)
@@ -92,14 +89,8 @@ bridge_manova_robust <- function(full_fit, null_fit, repetitions = 5L, cores = 1
   )
 }
 
-
-manova_robust_cache_path <- function() {
-  "outputs/intermediate/manova_robust.csv"
-}
-
-
-run_manova_robust <- function(claim_id, focal_scale = 0.5, repetitions = 5L,
-                              cache = manova_robust_cache_path()) {
+manova_robust_cache_path <- function() {"outputs/intermediate/manova_robust.csv"}
+run_manova_robust <- function(claim_id, focal_scale = 0.5, repetitions = 5L, cache = manova_robust_cache_path()) {
   spec <- manova_robust_spec(claim_id)
   data <- manova_robust_standardize(spec$load(), spec$outcomes)
   full <- fit_manova_robust(data, spec$outcomes, spec$full, focal_scale, seed = 123)
@@ -132,7 +123,6 @@ run_all_manova_robust <- function(claim_ids = manova_robust_claim_ids(),
   purrr::map_dfr(claim_ids, function(cid) run_manova_robust(cid, focal_scale, repetitions))
 }
 
-
 diagnose_manova_robust <- function(claim_id, focal_scale = 0.5, repetitions = 5L) {
   spec <- manova_robust_spec(claim_id)
   data <- manova_robust_standardize(spec$load(), spec$outcomes)
@@ -144,19 +134,16 @@ diagnose_manova_robust <- function(claim_id, focal_scale = 0.5, repetitions = 5L
   tibble::tibble(
     claim_id = claim_id,
     focal_scale = focal_scale,
-    gaussian_log10_bf10 = fit_pair(brms::gaussian()),
+    gaussian_log10_bf10 = fit_pair(stats::gaussian()),
     student_t_log10_bf10 = fit_pair(brms::student())
   )
 }
-
 
 summarise_manova_robust <- function(primary = "outputs/tables/bayes_factor_results.csv",
                                     cache = manova_robust_cache_path(),
                                     out = "outputs/tables/manova_robust_sensitivity.csv",
                                     threshold = log10(3)) {
-  if (!file.exists(cache)) {
-    stop("No Student-t robustness cache at ", cache, "; run run_all_manova_robust() first.", call. = FALSE)
-  }
+  if (!file.exists(cache)) {stop("No Student-t robustness cache at ", cache, "; run run_all_manova_robust() first.", call. = FALSE)}
   rob <- utils::read.csv(cache, stringsAsFactors = FALSE)
   cat_of <- function(x) ifelse(x > threshold, "H1", ifelse(x < -threshold, "H0", "Inconclusive"))
   pri <- readr::read_csv(primary, show_col_types = FALSE) |>
