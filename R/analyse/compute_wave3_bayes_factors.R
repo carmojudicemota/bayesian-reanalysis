@@ -50,6 +50,11 @@ compute_wave3_bayes_factors <- function(claims_path = "data/derived/claims.csv",
   readr::write_csv(results,output_path, na = "")
   message("Created Wave 3 output for ", dplyr::n_distinct(results$claim_id),
           " claims from ", dplyr::n_distinct(results$study_id)," studies.")
-  
+
+  tryCatch(
+    wave3_residual_diagnostics_table(),
+    error = function(e) message("Residual diagnostics skipped: ", conditionMessage(e))
+  )
+
   invisible(results)
 }

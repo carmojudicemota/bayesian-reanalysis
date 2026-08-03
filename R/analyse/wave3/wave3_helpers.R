@@ -40,9 +40,9 @@ wave3_row <- function(
     method,
     prior_label = "primary",
     bf_error = NA_real_) {
-  
+
   bf10 <- as.numeric(bf10)
-  
+
   tibble::tibble(
     claim_id = claim$claim_id,
     study_id = claim$study_id,
@@ -74,42 +74,20 @@ wave3_row <- function(
 }
 
 
-wave3_manova_diagnostics <- function(model) {
-  resid <- stats::residuals(model)
-  shapiro_p <- apply(resid, 2, function(z) stats::shapiro.test(z)$p.value)
-  n <- nrow(resid)
-  list(
-    n = n,
-    n_outcomes = ncol(resid),
-    n_location_parameters = nrow(stats::coef(model)),
-    fraction_b = nrow(stats::coef(model)) / n,
-    min_shapiro_p = min(shapiro_p),
-    shapiro_p = shapiro_p
-  )
-}
-
-
-wave3_check_assumptions <- function(model, claim_id, min_shapiro = 0.001) {
-  d <- wave3_manova_diagnostics(model)
-  message(sprintf(
-    "%s: N=%d, outcomes=%d, fraction b~%.3f, min Shapiro p=%.4g",
-    claim_id, d$n, d$n_outcomes, d$fraction_b, d$min_shapiro_p
-  ))
-  if (d$min_shapiro_p < min_shapiro) {
-    warning(sprintf(
-      "%s: residual normality is doubtful (min Shapiro p=%.4g); consider the Student-t robustness fit.",
-      claim_id, d$min_shapiro_p
-    ), call. = FALSE)
-  }
-  invisible(d)
+wave3_moment_shape <- function(z) {
+  z <- z[is.finite(z)]
+  m <- mean(z)
+  s <- sqrt(mean((z - m)^2))
+  c(skewness = mean((z - m)^3) / s^3,
+    excess_kurtosis = mean((z - m)^4) / s^4 - 3)
 }
 
 
 wave3_manova_diagnostics <- function(model) {
   resid <- stats::residuals(model)
   shapiro_p <- apply(resid, 2, function(z) stats::shapiro.test(z)$p.value)
+  shape <- apply(resid, 2, wave3_moment_shape)
   n <- nrow(resid)
-  box_m_p <- NA_real_
   list(
     n = n,
     n_outcomes = ncol(resid),
@@ -117,7 +95,8 @@ wave3_manova_diagnostics <- function(model) {
     fraction_b = nrow(stats::coef(model)) / n,
     min_shapiro_p = min(shapiro_p),
     shapiro_p = shapiro_p,
-    box_m_p = box_m_p
+    skewness = shape["skewness", ],
+    excess_kurtosis = shape["excess_kurtosis", ]
   )
 }
 
@@ -135,4 +114,28 @@ wave3_check_assumptions <- function(model, claim_id, min_shapiro = 0.001) {
     ), call. = FALSE)
   }
   invisible(d)
+}
+
+
+wave3_residual_diagnostics_table <- function(out_csv = "outputs/diagnostics/wave3_residual_diagnostics.csv") {
+  specs <- list(
+    study_03 = list(model = fit_study_03_model(load_study_03_data()), outcomes = study_03_outcomes()),
+    study_18 = list(model = fit_study_18_model(load_study_18_data()), outcomes = paste0("skill_", 1:8)),
+    study_44 = list(model = fit_study_44_model(load_study_44_data()), outcomes = study_44_outcomes())
+  )
+  rows <- purrr::map_dfr(names(specs), function(sid) {
+    d <- wave3_manova_diagnostics(specs[[sid]]$model)
+    tibble::tibble(
+      study_id = sid,
+      outcome = specs[[sid]]$outcomes,
+      n = d$n,
+      shapiro_p = as.numeric(d$shapiro_p),
+      skewness = as.numeric(d$skewness),
+      excess_kurtosis = as.numeric(d$excess_kurtosis),
+      normality_flag = as.numeric(d$shapiro_p) < 0.001
+    )
+  })
+  dir.create(dirname(out_csv), recursive = TRUE, showWarnings = FALSE)
+  readr::write_csv(rows, out_csv)
+  invisible(rows)
 }
