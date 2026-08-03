@@ -231,7 +231,8 @@ build_stability_table <- function(reseed_summary, harvested,
 
 plot_stability_forest <- function(table, out_png = "outputs/figures/stability_forest.png", threshold = log10(3)) {
   tr <- function(x) asinh(x)
-  brks <- c(-5, -2, -1, 0, 1, 2, 5, 10, 30, 90)
+  brks <- c(-5, -2, -1, -threshold, 0, threshold, 1, 2, 5, 10, 30, 90)
+  brk_labels <- ifelse(brks == round(brks), as.character(round(brks)), sprintf("%.2f", brks))
   plot_df <- table |>
     dplyr::mutate(claim_id = factor(.data$claim_id, levels = rev(unique(.data$claim_id))))
   verdict_colours <- c(Stable = "#2166AC", `Analytic (exact)` = "#4393C3",
@@ -244,7 +245,7 @@ plot_stability_forest <- function(table, out_png = "outputs/figures/stability_fo
     ggplot2::geom_vline(xintercept = c(tr(-threshold), tr(threshold)), linetype = "dashed", linewidth = 0.3) +
     ggplot2::geom_errorbar(ggplot2::aes(xmin = tr(.data$lower), xmax = tr(.data$upper)), orientation = "y", width = 0.25, linewidth = 0.5) +    
     ggplot2::geom_point(size = 2) +
-    ggplot2::scale_x_continuous(breaks = tr(brks), labels = brks) +
+    ggplot2::scale_x_continuous(breaks = tr(brks), labels = brk_labels) +
     ggplot2::scale_colour_manual(values = verdict_colours, name = "Stability verdict") +
     ggplot2::facet_grid(rows = ggplot2::vars(.data$wave), scales = "free_y", space = "free_y") +
     ggplot2::labs(x = expression(log[10](BF[10]) ~ "(asinh scale; bars = numerical spread)"),
