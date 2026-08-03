@@ -50,17 +50,18 @@ manova_robust_standardize <- function(data, outcomes) {
 
 
 fit_manova_robust <- function(data, outcomes, rhs, focal_scale = 0.5, seed = 123,
+                              family = brms::student(),
                               chains = 4, iter = 4000, warmup = 1000, cores = 4) {
   form <- stats::as.formula(paste0("mvbind(", paste(outcomes, collapse = ", "), ") ~ ", rhs))
   model <- brms::bf(form) + brms::set_rescor(TRUE)
-  priors <- brms::get_prior(model, data = data, family = brms::student())
+  priors <- brms::get_prior(model, data = data, family = family)
   priors$prior[priors$class == "Intercept" & priors$coef == ""] <- "student_t(3, 0, 2.5)"
   priors$prior[priors$class == "b" & priors$coef == ""] <- paste0("normal(0, ", focal_scale, ")")
   priors$prior[priors$class == "rescor"] <- "lkj(1)"
   brms::brm(
     formula = model,
     data = data,
-    family = brms::student(),
+    family = family,
     prior = priors,
     chains = chains,
     iter = iter,
@@ -129,6 +130,23 @@ run_manova_robust <- function(claim_id, focal_scale = 0.5, repetitions = 5L,
 run_all_manova_robust <- function(claim_ids = manova_robust_claim_ids(),
                                   focal_scale = 0.5, repetitions = 5L) {
   purrr::map_dfr(claim_ids, function(cid) run_manova_robust(cid, focal_scale, repetitions))
+}
+
+
+diagnose_manova_robust <- function(claim_id, focal_scale = 0.5, repetitions = 5L) {
+  spec <- manova_robust_spec(claim_id)
+  data <- manova_robust_standardize(spec$load(), spec$outcomes)
+  fit_pair <- function(family) {
+    full <- fit_manova_robust(data, spec$outcomes, spec$full, focal_scale, seed = 123, family = family)
+    null <- fit_manova_robust(data, spec$outcomes, spec$null, focal_scale, seed = 124, family = family)
+    bridge_manova_robust(full, null, repetitions)$log10_bf10
+  }
+  tibble::tibble(
+    claim_id = claim_id,
+    focal_scale = focal_scale,
+    gaussian_log10_bf10 = fit_pair(brms::gaussian()),
+    student_t_log10_bf10 = fit_pair(brms::student())
+  )
 }
 
 
