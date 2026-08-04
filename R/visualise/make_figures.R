@@ -150,7 +150,9 @@ theme_project <- function(base = 12) {
       panel.grid.minor = element_blank(),
       plot.title.position = "plot",
       plot.title = element_text(face = "bold"),
-      legend.position = "bottom"
+      legend.position = "bottom",
+      legend.box = "vertical",
+      legend.margin = margin(2, 2, 2, 2)
     )
 }
 
@@ -204,33 +206,62 @@ zoom_lim <- 1.5
 cat_of <- function(x) ifelse(x > thr_b, "H1", ifelse(x < -thr_b, "H0", "Inconclusive"))
 tr_asinh <- function(x) asinh(x)
 
+jeff_bf10   <- c(1/100, 1/30, 1/10, 1/3, 1, 3, 10, 30, 100, 1e4, 1e10, 1e30, 1e90)
+jeff_log10  <- log10(jeff_bf10)
+jeff_labels <- c("1/100", "1/30", "1/10", "1/3", "1", "3", "10", "30", "100",
+                 "10^4", "10^10", "10^30", "10^90")
+jeff_lines  <- log10(c(1/100, 1/30, 1/10, 1/3, 3, 10, 30, 100))
+jeff_bands  <- tibble::tibble(
+  from = c(-7, -2, -1, -thr_b, thr_b, 1, 2),
+  to   = c(-2, -1, -thr_b, thr_b, 1, 2, 230),
+  band = factor(c("Decisive H0", "Strong H0", "Moderate H0", "Inconclusive",
+                  "Moderate H1", "Strong H1", "Decisive H1"),
+                levels = c("Decisive H0", "Strong H0", "Moderate H0", "Inconclusive",
+                           "Moderate H1", "Strong H1", "Decisive H1"))
+)
+band_fill <- c("Decisive H0" = "#B2182B", "Strong H0" = "#E68A7F", "Moderate H0" = "#FADBD5",
+               "Inconclusive" = "#ECECEC", "Moderate H1" = "#CFE0F1", "Strong H1" = "#7FB0D8",
+               "Decisive H1" = "#2166AC")
+jeff_sec_axis <- function() ggplot2::sec_axis(~ ., breaks = tr_asinh(jeff_log10),
+                                              labels = sprintf("%.2f", jeff_log10),
+                                              name = expression(log[10](BF[10])))
+
 draw_dumbbell <- function(df, xlim, title, subtitle) {
   df <- df |> dplyr::mutate(row = rank(primary, ties.method = "first"))
+  keep <- jeff_log10 >= xlim[1] & jeff_log10 <= xlim[2]
+  vl <- jeff_lines[jeff_lines >= xlim[1] & jeff_lines <= xlim[2]]
   ggplot(df) +
-    annotate("rect", xmin = -thr_b, xmax = thr_b, ymin = -Inf, ymax = Inf, fill = "#9E9E9E", alpha = 0.12) +
-    geom_vline(xintercept = c(-thr_b, thr_b), linetype = "dashed", linewidth = 0.35) +
-    geom_vline(xintercept = 0, linewidth = 0.3) +
+    geom_rect(data = jeff_bands, aes(xmin = from, xmax = to, ymin = -Inf, ymax = Inf, fill = band),
+              inherit.aes = FALSE, alpha = 0.45) +
+    geom_vline(xintercept = vl, colour = "white", linewidth = 0.4) +
+    geom_vline(xintercept = 0, colour = "grey30", linewidth = 0.3) +
     geom_segment(aes(x = lo, xend = hi, y = row, yend = row, colour = connector), linewidth = 1.4) +
     geom_point(aes(nar, row), colour = prior_cols[["narrow"]],  size = 2.1, na.rm = TRUE) +
     geom_point(aes(pri, row), colour = prior_cols[["primary"]], size = 3.0, na.rm = TRUE) +
     geom_point(aes(wid, row), colour = prior_cols[["wide"]],    size = 2.1, na.rm = TRUE) +
+    scale_fill_manual(values = band_fill, name = "Jeffreys grade") +
     scale_colour_manual(values = c(changes = "#D55E00", stable = "#4477AA"), name = NULL,
                         labels = c(changes = "Category changes", stable = "Category stable")) +
+    scale_x_continuous(breaks = jeff_log10[keep], labels = jeff_labels[keep],
+                       sec.axis = sec_axis(~ ., breaks = jeff_log10[keep],
+                                           labels = sprintf("%.2f", jeff_log10[keep]),
+                                           name = expression(log[10](BF[10])))) +
     scale_y_continuous(breaks = df$row, labels = short_claim(df$claim_id), expand = expansion(add = 0.8)) +
     coord_cartesian(xlim = xlim) +
-    labs(title = title, subtitle = subtitle, x = expression(log[10](BF[10])), y = NULL) +
-    theme_project() + theme(axis.text.y = element_text(size = 7))
+    guides(fill = guide_legend(nrow = 2, order = 1),
+           colour = guide_legend(nrow = 1, order = 2)) +
+    labs(title = title, subtitle = subtitle, x = expression(BF[10]~"(Jeffreys scale)"), y = NULL) +
+    theme_project() + theme(axis.text.y = element_text(size = 7), panel.grid.major.x = element_blank())
 }
 
 lab_df <- cl |> filter(concordance_status == "Inconclusive")
 
 evidence_plane_main <- ggplot(cl, aes(negative_log10_p, log10_bf10)) +
-  annotate("rect", xmin = thr_p, xmax = Inf, ymin = thr_b, ymax = Inf, fill = "#009E73", alpha = 0.06) +
-  annotate("rect", xmin = -Inf, xmax = thr_p, ymin = -Inf, ymax = -thr_b, fill = "#009E73", alpha = 0.06) +
-  annotate("rect", xmin = thr_p, xmax = Inf, ymin = -Inf, ymax = -thr_b, fill = "#D55E00", alpha = 0.07) +
-  annotate("rect", xmin = -Inf, xmax = thr_p, ymin = thr_b, ymax = Inf, fill = "#D55E00", alpha = 0.07) +
+  annotate("rect", xmin = -Inf, xmax = Inf, ymin = thr_b, ymax = Inf, fill = "#2166AC", alpha = 0.06) +
+  annotate("rect", xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = -thr_b, fill = "#B2182B", alpha = 0.06) +
   annotate("rect", xmin = -Inf, xmax = Inf, ymin = -thr_b, ymax = thr_b, fill = "#999999", alpha = 0.10) +
   geom_hline(yintercept = c(-thr_b, thr_b), linetype = "dashed", linewidth = 0.4) +
+  geom_hline(yintercept = c(-2, -1, 1, 2), linetype = "dotted", linewidth = 0.3, colour = "grey55") +
   geom_hline(yintercept = 0, linewidth = 0.3) +
   geom_vline(xintercept = thr_p, linetype = "dashed", linewidth = 0.4) +
   geom_point(aes(colour = concordance_status), size = 2.8) +
@@ -240,12 +271,25 @@ evidence_plane_main <- ggplot(cl, aes(negative_log10_p, log10_bf10)) +
     size = 2.8, min.segment.length = 0, max.overlaps = Inf
   ) +
   scale_colour_manual(values = status_cols, name = NULL, drop = FALSE) +
-  coord_cartesian(xlim = c(0, 5.2), ylim = c(-3.2, 3.2)) +
+  scale_y_continuous(
+    breaks = c(-2, -1, -thr_b, 0, thr_b, 1, 2),
+    labels = c("1/100", "1/10", "1/3", "1", "3", "10", "100"),
+    sec.axis = sec_axis(~ ., breaks = c(-2, -1, -thr_b, 0, thr_b, 1, 2),
+                        labels = sprintf("%.2f", c(-2, -1, -thr_b, 0, thr_b, 1, 2)),
+                        name = expression(log[10](BF[10])))
+  ) +
+  scale_x_continuous(
+    breaks = -log10(c(.05, .01, .001, .0001)),
+    labels = sprintf("%.1f", -log10(c(.05, .01, .001, .0001))),
+    sec.axis = sec_axis(~ ., breaks = -log10(c(.05, .01, .001, .0001)),
+                        labels = c(".05", ".01", ".001", ".0001"), name = "p-value")
+  ) +
+  coord_cartesian(xlim = c(0, 5.2), ylim = c(-2.2, 2.2)) +
   labs(
     title = "Frequentist–Bayesian Evidence Plane",
-    subtitle = "Decision zone; extreme Bayes factors are clipped at the panel edge",
+    subtitle = "Left axis = BF10 on the Jeffreys scale; dashed = decision thresholds; zoomed to the ±100 decision zone",
     x = expression(Frequentist~evidence~~-log[10](p)),
-    y = expression(Bayesian~evidence~~log[10](BF[10]))
+    y = expression(BF[10])
   ) +
   theme_project()
 
@@ -286,23 +330,28 @@ pts <- cl |>
   ) |>
   left_join(grid |> select(freq, bayes, status), by = c("freq", "bayes"))
 
-counts <- cl |>
+counts_raw <- cl |>
   mutate(
     freq = if_else(frequentist_result == "Significant", "Significant", "Nonsignificant"),
     bayes = as.character(bf_conclusion)
   ) |>
-  count(freq, bayes, name = "n") |>
+  count(freq, bayes, name = "n")
+
+counts <- grid |>
+  transmute(freq, bayes, x, y, status) |>
+  left_join(counts_raw, by = c("freq", "bayes")) |>
   mutate(
-    x = match(bayes, c("H0", "Inconclusive", "H1")),
-    y = match(freq, c("Nonsignificant", "Significant"))
+    n = coalesce(n, 0L),
+    pct = 100 * n / sum(n),
+    lab = paste0(n, "\n", sprintf("%.0f%%", pct))
   )
 
 concordance_plot <- ggplot(grid, aes(x, y)) +
-  geom_tile(aes(fill = status), alpha = 0.18, colour = "grey85", width = 0.98, height = 0.98) +
-  geom_text(data = counts, aes(x = x - 0.32, y = y + 0.30, label = n),
-            inherit.aes = FALSE, size = 7, fontface = "bold") +
+  geom_tile(aes(fill = status), alpha = 0.20, colour = "grey85", width = 0.98, height = 0.98) +
+  geom_text(data = counts, aes(x = x, y = y + 0.29, label = lab),
+            inherit.aes = FALSE, size = 5, fontface = "bold", lineheight = 0.9) +
   geom_point(data = pts, aes(x = xj, y = yj, colour = status),
-             inherit.aes = FALSE, size = 2.4) +
+             inherit.aes = FALSE, size = 2.2) +
   scale_fill_manual(values = status_cols, guide = "none", drop = FALSE) +
   scale_colour_manual(values = status_cols, guide = "none", drop = FALSE) +
   scale_x_continuous(breaks = 1:3,
@@ -312,58 +361,77 @@ concordance_plot <- ggplot(grid, aes(x, y)) +
                      expand = expansion(add = 0.5)) +
   coord_fixed() +
   labs(title = "Six-Cell Concordance Matrix",
-       subtitle = "Frequentist vs Bayesian Evidence", x = NULL, y = NULL) +
+       subtitle = paste0("(Axis not to scale)"),
+       x = NULL, y = NULL) +
   theme_project()
 
 ggsave("outputs/figures/concordance.png", concordance_plot, width = 9, height = 6, dpi = 300)
 
 
-bars_df <- cl |>
+grid_wide <- bf |>
+  filter(prior_label %in% c("narrow", "primary", "wide"), is.finite(log10_bf10)) |>
+  distinct(claim_id, prior_label, log10_bf10) |>
+  tidyr::pivot_wider(names_from = prior_label, values_from = log10_bf10)
+
+spectrum_df <- cl |>
   filter(is.finite(log10_bf10)) |>
-  mutate(claim = reorder(short_claim(claim_id), log10_bf10))
+  arrange(log10_bf10) |>
+  mutate(claim = short_claim(claim_id), row = row_number()) |>
+  left_join(grid_wide, by = "claim_id")
+for (col in c("narrow", "primary", "wide")) if (!col %in% names(spectrum_df)) spectrum_df[[col]] <- NA_real_
+spectrum_df <- spectrum_df |>
+  mutate(primary = coalesce(primary, log10_bf10),
+         lo = pmin(narrow, primary, wide, na.rm = TRUE),
+         hi = pmax(narrow, primary, wide, na.rm = TRUE))
 
-rank_brks <- c(-5, -2, -1, 0, 1, 2, 5, 10, 30, 90, 220)
+draw_spectrum <- function(df, title, subtitle, xlim) {
+  keep <- jeff_log10 >= xlim[1] & jeff_log10 <= xlim[2]
+  vl <- jeff_lines[jeff_lines >= xlim[1] & jeff_lines <= xlim[2]]
+  ggplot(df) +
+    geom_rect(data = jeff_bands,
+              aes(xmin = tr_asinh(from), xmax = tr_asinh(to), ymin = -Inf, ymax = Inf, fill = band),
+              inherit.aes = FALSE, alpha = 0.50) +
+    geom_vline(xintercept = tr_asinh(vl), colour = "white", linewidth = 0.4) +
+    geom_vline(xintercept = 0, colour = "grey30", linewidth = 0.3) +
+    geom_segment(aes(x = tr_asinh(lo), xend = tr_asinh(hi), y = row, yend = row, colour = concordance_status),
+                 linewidth = 1.0, alpha = 0.8) +
+    geom_point(aes(tr_asinh(narrow), row), colour = prior_cols[["narrow"]], size = 1.9, na.rm = TRUE) +
+    geom_point(aes(tr_asinh(wide), row), colour = prior_cols[["wide"]], size = 1.9, na.rm = TRUE) +
+    geom_point(aes(tr_asinh(primary), row), colour = prior_cols[["primary"]], size = 2.8, na.rm = TRUE) +
+    scale_colour_manual(values = status_cols, name = "Concordance (segment)", drop = FALSE) +
+    scale_fill_manual(values = band_fill, name = "Jeffreys grade") +
+    scale_x_continuous(breaks = tr_asinh(jeff_log10[keep]), labels = jeff_labels[keep],
+                       sec.axis = sec_axis(~ ., breaks = tr_asinh(jeff_log10[keep]),
+                                           labels = sprintf("%.2f", jeff_log10[keep]),
+                                           name = expression(log[10](BF[10])))) +
+    scale_y_continuous(breaks = df$row, labels = df$claim, expand = expansion(add = 0.6)) +
+    coord_cartesian(xlim = tr_asinh(xlim)) +
+    guides(fill = guide_legend(nrow = 2, order = 1),
+           colour = guide_legend(nrow = 1, order = 2)) +
+    labs(title = title, subtitle = subtitle, x = expression(BF[10]~"(Jeffreys scale)"), y = NULL) +
+    theme_project() +
+    theme(axis.text.y = element_text(size = 7), panel.grid.major.x = element_blank())
+}
 
-evidence_bars <- ggplot(bars_df, aes(claim, tr_asinh(log10_bf10), fill = log10_bf10)) +
-  annotate("rect", xmin = -Inf, xmax = Inf, ymin = tr_asinh(-thr_b), ymax = tr_asinh(thr_b),
-           fill = "#9E9E9E", alpha = 0.12) +
-  geom_hline(yintercept = c(tr_asinh(-thr_b), tr_asinh(thr_b)), linetype = "dashed", linewidth = 0.35) +
-  geom_hline(yintercept = 0, linewidth = 0.3) +
-  geom_col(width = 0.75) +
-  coord_flip() +
-  scale_y_continuous(breaks = tr_asinh(rank_brks), labels = rank_brks) +
-  scale_fill_gradient2(low = "#B2182B", mid = "#EAEAEA", high = "#2166AC", midpoint = 0,
-                       name = expression(log[10](BF[10]))) +
-  labs(title = "Detailed Evidence Rank",
-       subtitle = "Augmented Version", x = NULL,
-       y = expression(log[10](BF[10])~"(asinh)")) +
-  theme_project() +
-  theme(axis.text.y = element_text(size = 7))
+full_xlim <- range(c(spectrum_df$lo, spectrum_df$hi), na.rm = TRUE) + c(-0.3, 0.3)
+evidence_spectrum <- draw_spectrum(
+  spectrum_df, "The Evidence Spectrum",
+  "Balls = narrow / primary / wide prior scales; segment colour = concordance; shaded band = Jeffreys grade",
+  full_xlim)
+ggsave("outputs/figures/evidence_spectrum.png", evidence_spectrum,
+       width = 10, height = 4 + 0.20 * nrow(spectrum_df), dpi = 300, limitsize = FALSE)
 
-ggsave("outputs/figures/diverging_evidence_bars.png", evidence_bars,
-       width = 9, height = 4 + 0.20 * nrow(bars_df), dpi = 300, limitsize = FALSE)
+spectrum_zoom_df <- spectrum_df |>
+  filter(abs(log10_bf10) <= zoom_lim) |>
+  arrange(log10_bf10) |>
+  mutate(row = row_number())
 
-bars_zoom_df <- cl |>
-  filter(is.finite(log10_bf10), abs(log10_bf10) <= zoom_lim) |>
-  mutate(claim = reorder(short_claim(claim_id), log10_bf10))
-
-evidence_bars_zoom <- ggplot(bars_zoom_df, aes(claim, log10_bf10, fill = log10_bf10)) +
-  annotate("rect", xmin = -Inf, xmax = Inf, ymin = -thr_b, ymax = thr_b, fill = "#9E9E9E", alpha = 0.12) +
-  geom_hline(yintercept = c(-thr_b, thr_b), linetype = "dashed", linewidth = 0.35) +
-  geom_hline(yintercept = 0, linewidth = 0.3) +
-  geom_col(width = 0.7) +
-  coord_flip() +
-  scale_fill_gradient2(low = "#B2182B", mid = "#EAEAEA", high = "#2166AC", midpoint = 0,
-                       name = expression(log[10](BF[10]))) +
-  labs(title = "Detailed Evidence Rank — threshold zoom",
-       subtitle = bquote("Claims with " |log[10]~BF[10]| ≤ .(zoom_lim)), 
-       x = NULL,
-       y = expression(log[10](BF[10]))) +
-  theme_project() +
-  theme(axis.text.y = element_text(size = 8))
-
-ggsave("outputs/figures/diverging_evidence_bars_zoom.png", evidence_bars_zoom,
-       width = 8, height = 3 + 0.30 * nrow(bars_zoom_df), dpi = 300, limitsize = FALSE)
+evidence_spectrum_zoom <- draw_spectrum(
+  spectrum_zoom_df, "The Evidence Spectrum — decision zone",
+  paste0("Claims with |log10 BF10| <= ", zoom_lim, "; balls = narrow/primary/wide prior scales, segment colour = concordance"),
+  c(-zoom_lim - 0.35, zoom_lim + 0.35))
+ggsave("outputs/figures/evidence_spectrum_zoom.png", evidence_spectrum_zoom,
+       width = 9, height = 4 + 0.32 * nrow(spectrum_zoom_df), dpi = 300, limitsize = FALSE)
 
 prior_variants <- bf |>
   dplyr::filter(is.finite(log10_bf10)) |>
@@ -399,7 +467,7 @@ prior_robustness <- draw_dumbbell(full_df, c(-6.4, 6.4),
   "Prior Robustness (all claims)",
   "Axis capped at ±6")
 ggsave("outputs/figures/prior_robustness.png", prior_robustness,
-       width = 9, height = 4 + 0.22 * nrow(full_df), dpi = 300, limitsize = FALSE)
+       width = 10, height = 4 + 0.22 * nrow(full_df), dpi = 300, limitsize = FALSE)
 
 zoom_df <- prior_wide |>
   dplyr::filter(abs(primary) <= zoom_lim) |>
@@ -411,7 +479,7 @@ prior_robustness_zoom <- draw_dumbbell(zoom_df, zoom_xlim,
   "Prior Robustness",
   "Augmented Version")
 ggsave("outputs/figures/prior_robustness_zoom.png", prior_robustness_zoom,
-       width = 9, height = 4 + 0.30 * nrow(zoom_df), dpi = 300, limitsize = FALSE)
+       width = 10, height = 4 + 0.30 * nrow(zoom_df), dpi = 300, limitsize = FALSE)
 
 
 prior_long <- bf |>
@@ -484,78 +552,122 @@ prior_slope_graph_zoom <- ggplot(slope_zoom_df, aes(prior_label, log10_bf10, gro
                            segment.size = 0.2, segment.colour = "grey70",
                            max.overlaps = Inf, show.legend = FALSE) +
   coord_cartesian(ylim = slope_ylim, clip = "off") +
-  labs(title = "Prior Slope Graph — threshold zoom",
-       subtitle = bquote("Claims with " |log[10]~BF[10]| ≤ .(slope_zoom_lim) ~ "; axis fitted to the data")
-       x = NULL, y = expression(log[10](BF[10]))) +
+  labs(
+    title = "Prior Slope Graph — threshold zoom",
+    subtitle = expression("Claims with " * abs(log[10](BF[10])) <= 2),
+    x = NULL,
+    y = expression(log[10](BF[10]))) +
   theme_project()
 
 ggsave("outputs/figures/prior_slope_graph_zoom.png", prior_slope_graph_zoom, width = 9, height = 6, dpi = 300)
 
 
-grades <- c("\u22641/100", "1/100–1/10", "1/10–1/3", "1/3–3", "3–10", "10–100", "\u2265100")
-grade_cols <- c(
-  "\u22641/100" = "#3F007D", "1/100–1/10" = "#6A51A3", "1/10–1/3" = "#9E9AC8",
-  "1/3–3" = "#EAEAEA", "3–10" = "#92C5DE", "10–100" = "#4393C3", "\u2265100" = "#2166AC"
-)
-grade_df <- cl |>
-  filter(!is.na(family), is.finite(log10_bf10)) |>
-  mutate(grade = cut(log10_bf10, breaks = c(-Inf, -2, -1, -thr_b, thr_b, 1, 2, Inf),
-                     labels = grades, include.lowest = TRUE, ordered_result = TRUE)) |>
-  count(family, grade, name = "n", .drop = FALSE) |>
-  complete(family, grade = factor(grades, levels = grades, ordered = TRUE), fill = list(n = 0)) |>
-  group_by(family) |>
-  mutate(
-    total = sum(n),
-    share = if_else(total > 0, n / total, 0),
-    negative = grade %in% grades[1:3],
-    inconclusive = grade == "1/3–3",
-    positive = grade %in% grades[5:7],
-    neg_total = sum(share[negative]),
-    inc_share = sum(share[inconclusive]),
-    start = -neg_total - inc_share / 2,
-    order_index = as.integer(grade)
-  ) |>
-  arrange(family, order_index) |>
-  mutate(xmin = start + lag(cumsum(share), default = 0), xmax = start + cumsum(share)) |>
-  ungroup()
+n_lookup <- bf |>
+  transmute(claim_id, n_total = safe_numeric(n_total)) |>
+  filter(!is.na(n_total)) |>
+  distinct(claim_id, .keep_all = TRUE)
 
-family_order <- grade_df |>
+fam_df <- cl |>
+  filter(is.finite(log10_bf10), !is.na(family)) |>
+  left_join(n_lookup, by = "claim_id")
+
+fam_order <- fam_df |>
   group_by(family) |>
-  summarise(positive_share = sum(share[positive]), negative_share = sum(share[negative]), .groups = "drop") |>
-  arrange(positive_share - negative_share) |>
+  summarise(m = stats::median(log10_bf10), .groups = "drop") |>
+  arrange(m) |>
   pull(family)
+fam_df <- fam_df |> mutate(family = factor(family, levels = fam_order))
 
-grade_df <- grade_df |> mutate(family = factor(family, levels = family_order))
+fam_xlim <- range(fam_df$log10_bf10) + c(-0.3, 0.3)
+keepf <- jeff_log10 >= fam_xlim[1] & jeff_log10 <= fam_xlim[2]
+vlf <- jeff_lines[jeff_lines >= fam_xlim[1] & jeff_lines <= fam_xlim[2]]
 
-diverging_jeffreys_by_family <- ggplot(grade_df) +
-  geom_rect(aes(xmin = xmin, xmax = xmax,
-                ymin = as.numeric(family) - 0.38, ymax = as.numeric(family) + 0.38, fill = grade)) +
-  geom_vline(xintercept = 0, linewidth = 0.3) +
-  scale_fill_manual(values = grade_cols, drop = FALSE, name = "Jeffreys grade") +
-  scale_x_continuous(labels = scales::label_percent(accuracy = 1), limits = c(-1, 1), breaks = seq(-1, 1, 0.25)) +
-  scale_y_continuous(breaks = seq_along(family_order), labels = family_order, expand = expansion(add = 0.6)) +
-  labs(title = "Diverging Jeffreys Grades by Family",
-       subtitle = "The inconclusive grade is centred on zero", x = "Share of Claims", y = NULL) +
-  theme_project() +
-  theme(axis.text.y = element_text(size = 8))
+fam_layers <- function(with_size) {
+  jit <- if (with_size) {
+    geom_jitter(aes(size = n_total, colour = concordance_status), height = 0.18, width = 0, alpha = 0.85)
+  } else {
+    geom_jitter(aes(colour = concordance_status), height = 0.18, width = 0, alpha = 0.85, size = 2.6)
+  }
+  sz <- if (with_size) scale_size_area(name = "Sample size (N)", max_size = 8) else NULL
+  sub <- if (with_size) {
+    "Each point a claim on the Jeffreys scale; point size = sample size (N); colour = concordance"
+  } else {
+    "Each point a claim on the Jeffreys scale; colour = concordance"
+  }
+  ggplot(fam_df, aes(tr_asinh(log10_bf10), family)) +
+    geom_rect(data = jeff_bands, aes(xmin = tr_asinh(from), xmax = tr_asinh(to), ymin = -Inf, ymax = Inf, fill = band),
+              inherit.aes = FALSE, alpha = 0.45) +
+    geom_vline(xintercept = tr_asinh(vlf), colour = "white", linewidth = 0.4) +
+    geom_vline(xintercept = 0, colour = "grey30", linewidth = 0.3) +
+    jit +
+    scale_fill_manual(values = band_fill, name = "Jeffreys grade") +
+    scale_colour_manual(values = status_cols, name = "Concordance", drop = FALSE) +
+    sz +
+    scale_x_continuous(breaks = tr_asinh(jeff_log10[keepf]), labels = jeff_labels[keepf],
+                       sec.axis = sec_axis(~ ., breaks = tr_asinh(jeff_log10[keepf]),
+                                           labels = sprintf("%.2f", jeff_log10[keepf]),
+                                           name = expression(log[10](BF[10])))) +
+    coord_cartesian(xlim = tr_asinh(fam_xlim)) +
+    guides(fill = guide_legend(nrow = 2, order = 1),
+           colour = guide_legend(nrow = 1, order = 2),
+           size = guide_legend(order = 3)) +
+    labs(title = "Evidence by Statistical Family", subtitle = sub,
+         x = expression(BF[10]~"(Jeffreys scale)"), y = NULL) +
+    theme_project() +
+    theme(axis.text.y = element_text(size = 8))
+}
 
+fam_h <- max(5, 3 + 0.7 * nlevels(fam_df$family))
+
+set.seed(7)
+diverging_jeffreys_by_family <- fam_layers(TRUE)
 ggsave("outputs/figures/diverging_jeffreys_grades_by_family.png", diverging_jeffreys_by_family,
-       width = 10, height = 4 + 0.35 * length(family_order), dpi = 300, limitsize = FALSE)
+       width = 10, height = fam_h, dpi = 300, limitsize = FALSE)
+
+set.seed(7)
+diverging_jeffreys_by_family_plain <- fam_layers(FALSE)
+ggsave("outputs/figures/diverging_jeffreys_grades_by_family_plain.png", diverging_jeffreys_by_family_plain,
+       width = 10, height = fam_h, dpi = 300, limitsize = FALSE)
 
 
 invisible(list(
   evidence_plane = evidence_plane,
   concordance = concordance_plot,
-  diverging_evidence_bars = evidence_bars,
-  diverging_evidence_bars_zoom = evidence_bars_zoom,
+  evidence_spectrum = evidence_spectrum,
+  evidence_spectrum_zoom = evidence_spectrum_zoom,
   prior_robustness = prior_robustness,
   prior_robustness_zoom = prior_robustness_zoom,
   prior_slope_graph = prior_slope_graph,
   prior_slope_graph_zoom = prior_slope_graph_zoom,
-  diverging_jeffreys_grades_by_family = diverging_jeffreys_by_family
+  diverging_jeffreys_grades_by_family = diverging_jeffreys_by_family,
+  diverging_jeffreys_grades_by_family_plain = diverging_jeffreys_by_family_plain
 ))
 
 
+archive_superseded_figures <- function(dir = "outputs/figures", old = "outputs/figures/old",
+                                       keep = character()) {
+  dir.create(old, showWarnings = FALSE, recursive = TRUE)
+  figs <- list.files(dir, pattern = "[.](png|pdf|svg)$")
+  move <- setdiff(figs, keep)
+  if (length(move) > 0) file.rename(file.path(dir, move), file.path(old, move))
+  invisible(move)
+}
+
+canonical_figures <- c(
+  "evidence_plane.png", "concordance.png",
+  "evidence_spectrum.png", "evidence_spectrum_zoom.png",
+  "prior_robustness.png", "prior_robustness_zoom.png",
+  "prior_slope_graph.png", "prior_slope_graph_zoom.png",
+  "diverging_jeffreys_grades_by_family.png",
+  "diverging_jeffreys_grades_by_family_plain.png",
+  "detailed_evidence_rank_zoom.png", "problematic_claims_pvalues.png",
+  "stability_forest.png",
+  "dataset_family_counts.png", "dataset_status_by_family.png",
+  "dataset_role_by_family.png", "dataset_sample_size_by_family.png"
+)
+
+archive_superseded_figures(keep = canonical_figures)
+
 build_all_figures <- function() {
-  plot_evidence_plan()
+  invisible(NULL)
 }

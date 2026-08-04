@@ -231,30 +231,41 @@ build_stability_table <- function(reseed_summary, harvested,
 
 plot_stability_forest <- function(table, out_png = "outputs/figures/stability_forest.png", threshold = log10(3)) {
   tr <- function(x) asinh(x)
-  brks <- c(-5, -2, -1, -threshold, 0, threshold, 1, 2, 5, 10, 30, 90)
-  brk_labels <- ifelse(brks == round(brks), as.character(round(brks)), sprintf("%.2f", brks))
+  jeff_bf10 <- c(1/100, 1/30, 1/10, 1/3, 1, 3, 10, 30, 100, 1e4, 1e10, 1e30, 1e90)
+  jeff_log10 <- log10(jeff_bf10)
+  jeff_labels <- c("1/100", "1/30", "1/10", "1/3", "1", "3", "10", "30", "100",
+                   "10^4", "10^10", "10^30", "10^90")
+  jeff_lines <- log10(c(1/100, 1/30, 1/10, 1/3, 3, 10, 30, 100))
   plot_df <- table |>
     dplyr::mutate(claim_id = factor(.data$claim_id, levels = rev(unique(.data$claim_id))))
+  xr <- range(c(plot_df$lower, plot_df$upper, plot_df$central), na.rm = TRUE) + c(-0.5, 0.5)
+  keep <- jeff_log10 >= xr[1] & jeff_log10 <= xr[2] & !(jeff_labels %in% c("1/30", "30"))
+  vl <- jeff_lines[jeff_lines >= xr[1] & jeff_lines <= xr[2]]
   verdict_colours <- c(Stable = "#2166AC", `Analytic (exact)` = "#4393C3",
                        Borderline = "#E08214", `Magnitude unreliable` = "#B2182B",
                        Unstable = "#67001F", `Unstable (no convergence)` = "#67001F")
   plot <- ggplot2::ggplot(plot_df, ggplot2::aes(tr(.data$central), .data$claim_id,
                                                 colour = .data$verdict)) +
     ggplot2::annotate("rect", xmin = tr(-threshold), xmax = tr(threshold), ymin = -Inf, ymax = Inf, fill = "#9E9E9E", alpha = 0.15) +
+    ggplot2::geom_vline(xintercept = tr(vl), colour = "grey80", linewidth = 0.3) +
     ggplot2::geom_vline(xintercept = 0, linewidth = 0.3) +
     ggplot2::geom_vline(xintercept = c(tr(-threshold), tr(threshold)), linetype = "dashed", linewidth = 0.3) +
-    ggplot2::geom_errorbar(ggplot2::aes(xmin = tr(.data$lower), xmax = tr(.data$upper)), orientation = "y", width = 0.25, linewidth = 0.5) +    
+    ggplot2::geom_errorbar(ggplot2::aes(xmin = tr(.data$lower), xmax = tr(.data$upper)), orientation = "y", width = 0.25, linewidth = 0.5) +
     ggplot2::geom_point(size = 2) +
-    ggplot2::scale_x_continuous(breaks = tr(brks), labels = brk_labels) +
+    ggplot2::scale_x_continuous(breaks = tr(jeff_log10[keep]), labels = jeff_labels[keep],
+                                sec.axis = ggplot2::sec_axis(~ ., breaks = tr(jeff_log10[keep]),
+                                                             labels = sprintf("%.2f", jeff_log10[keep]),
+                                                             name = expression(log[10](BF[10])))) +
     ggplot2::scale_colour_manual(values = verdict_colours, name = "Stability verdict") +
     ggplot2::facet_grid(rows = ggplot2::vars(.data$wave), scales = "free_y", space = "free_y") +
-    ggplot2::labs(x = expression(log[10](BF[10]) ~ "(asinh scale; bars = numerical spread)"),
+    ggplot2::labs(x = expression(BF[10] ~ "(Jeffreys scale; bars = numerical spread)"),
                   y = NULL, title = "Project-Wide Monte Carlo Stability of Bayes Factors",
                   subtitle = "Grey Band = inconclusive region; Bars = ±2 SD, Seed Range, or Bridge Repetitions") +
     ggplot2::theme_minimal(base_size = 11) +
-    ggplot2::theme(legend.position = "bottom", panel.grid.minor = ggplot2::element_blank())
+    ggplot2::theme(legend.position = "bottom", panel.grid.minor = ggplot2::element_blank(),
+                   axis.text.x.bottom = ggplot2::element_text(angle = 45, hjust = 1, size = 8))
   dir.create(dirname(out_png), recursive = TRUE, showWarnings = FALSE)
-  ggplot2::ggsave(out_png, plot, width = 9, height = 2.5 + 0.4 * nrow(table), dpi = 150)
+  ggplot2::ggsave(out_png, plot, width = 10, height = 2.5 + 0.4 * nrow(table), dpi = 150)
   invisible(plot)
 }
 
