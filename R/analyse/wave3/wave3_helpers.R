@@ -42,6 +42,15 @@ wave3_row <- function(
     bf_error = NA_real_) {
 
   bf10 <- as.numeric(bf10)
+  restricted <- grepl("[<>]", model_alt)
+  bf_sidedness <- if (restricted) "one_sided" else "two_sided"
+  bf_direction <- if (restricted && grepl(">", model_alt, fixed = TRUE)) {
+    "positive"
+  } else if (restricted) {
+    "negative"
+  } else {
+    NA_character_
+  }
 
   tibble::tibble(
     claim_id = claim$claim_id,
@@ -49,8 +58,8 @@ wave3_row <- function(
     stat_test = claim$frequentist_test,
     bf_family = bf_family,
     design = "wave3",
-    bf_sidedness = "two_sided",
-    bf_direction = NA_character_,
+    bf_sidedness = bf_sidedness,
+    bf_direction = bf_direction,
     observed_sign = NA_character_,
     direction_matches_observed = NA,
     prior_label = prior_label,
