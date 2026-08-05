@@ -39,3 +39,4 @@ data/derived/claims_draft.csv
 # Large cached model objects (regenerated locally; exceed GitHub's 100 MB limit)
 outputs/intermediate/*.rds
 outputs/intermediate/study_55_models/
+lavExport/
