@@ -5,15 +5,6 @@ library(readr)
 library(ggrepel)
 library(patchwork)
 
-build_detailed_rank_table <- function(claim_level) {
-  claim_level |>
-    select(
-      claim_id, study_id, stat_test, p_value, p_band, frequentist_result, bf10, bf_strength,
-      favoured_side, concordance_cell, concordance_status, negative_log10_p, log10_bf10,
-      prior_sensitivity_span
-    ) |>
-    arrange(desc(log10_bf10))
-}
 plot_concordace_squares <- function(
     in_path = "outputs/tables/concordance_summary.csv",
     out_path = "outputs/figures/concordance_squares.png") {
@@ -61,23 +52,6 @@ plot_evidence_plan <- function(
          colour = NULL, title = "Frequentist-Bayesian Evidence Plane") +
     theme_reanalysis()
   save_fig(p,out_path,w=8,h=5.5)
-}
-plot_detailed_rank <- function(
-    in_path = "outputs/tables/concordance_claim_level.csv",
-    out_path = "outputs/figures/detailed_rank.png") {
-  library(dplyr); library(forcats)
-  d <- readr::read_csv(in_path, show_col_types = FALSE) |>
-    mutate(claim_id = fct_reorder(claim_id, log10_bf10))
-  p <- ggplot(d, aes(log10_bf10, claim_id)) +
-    geom_vline(xintercept = log10(jeffreys_bf), colour = "grey88", linewidth = 0.3) +
-    geom_vline(xintercept = 0, colour = "black", linewidth = 0.4) +
-    geom_point(aes(colour = concordance_status), size = 3) +
-    geom_text(aes(label = p_band), hjust = -0.15, size = 2.6, colour = "grey30") +
-    scale_colour_manual(values = concordance_colours) +
-    labs(x = expression(log[10](BF[10])~"(primary prior)"), y = NULL,
-         colour = NULL, title = "Detailed Evidence Rank") +
-    theme_reanalysis() + theme(panel.grid = element_blank())
-  save_fig(p, out_path, w = 9, h = max(4, 0.35 * nrow(d) + 1.5))
 }
 plot_prior_sensitivity <-function(
     in_path = "outputs/tables/bayes_factor_results.csv",
