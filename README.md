@@ -127,7 +127,7 @@ Methods used:
 Each Bayes factor's sidedness **follows the test the original article reported**:
 
 * two-sided or omnibus source tests receive two-sided (unrestricted) Bayes factors;
-* one-sided source tests receive one-sided Bayes factors — Study 49 as one-sided *t* tests  (Wave 1), and Study 20 as order-restricted (`psi > 0`) SEM contrasts (Wave 3).
+* one-sided source tests receive one-sided Bayes factors: Study 49 as one-sided *t* tests  (Wave 1), and Study 20 as order-restricted (`psi > 0`) SEM contrasts (Wave 3).
 
 
 ---
@@ -161,7 +161,7 @@ detailed_evidence_rank.csv
 
 ## Requirements
 
-R (developed on R 4.5, macOS) with `renv` for dependency management; Git to clone. For the claims marked `ready`, no external software beyond the packages in `renv.lock` is required. `cmdstanr` is recorded in `renv.lock`, but CmdStan itself is an external dependency; it is not required to reproduce the currently completed pipeline.
+R (developed on R 4.5, macOS) with `renv` for dependency management; Git to clone. For the claims marked `ready`, no external software beyond the packages in `renv.lock` is required. 
 
 Packages with compiled code may need a local rebuild when moving between R versions or platforms:
 
@@ -199,8 +199,7 @@ The run-all script refreshes the derived registry before running the analysis.
 
 ## Raw data
 
-Raw datasets are stored under `data/raw/study_XX/` and referenced by paths relative to the repository root. These are third-party research datasets included to support reproducibility. Ownership remains with the original authors or data providers; consult the
-relevant articles, repositories, and licences before redistributing or reusing individual datasets. Their presence here is not a transfer of ownership or permission for unrestricted redistribution.
+Raw datasets are stored under `data/raw/study_XX/` and referenced by paths relative to the repository root. These are third-party research datasets included to support reproducibility. Ownership remains with the original authors or data providers; consult the relevant articles, repositories, and licences before redistributing or reusing individual datasets. Their presence here is not a transfer of ownership or permission for unrestricted redistribution.
 
 ---
 
