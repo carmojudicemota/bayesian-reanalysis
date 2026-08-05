@@ -92,6 +92,32 @@ wave3_moment_shape <- function(z) {
 }
 
 
+wave3_mardia <- function(resid) {
+  x <- resid[stats::complete.cases(resid), , drop = FALSE]
+  n <- nrow(x)
+  p <- ncol(x)
+  z <- scale(x, center = TRUE, scale = FALSE)
+  s <- crossprod(z) / n
+  d <- z %*% solve(s) %*% t(z)
+  b1p <- sum(d^3) / (n^2)
+  b2p <- mean(diag(d)^2)
+  skew_stat <- n * b1p / 6
+  skew_df <- p * (p + 1) * (p + 2) / 6
+  kurt_expected <- p * (p + 2)
+  kurt_z <- (b2p - kurt_expected) / sqrt(8 * kurt_expected / n)
+  list(
+    mardia_skewness = b1p,
+    mardia_skew_stat = skew_stat,
+    mardia_skew_df = skew_df,
+    mardia_skew_p = stats::pchisq(skew_stat, df = skew_df, lower.tail = FALSE),
+    mardia_kurtosis = b2p,
+    mardia_kurtosis_expected = kurt_expected,
+    mardia_kurt_z = kurt_z,
+    mardia_kurt_p = 2 * stats::pnorm(-abs(kurt_z))
+  )
+}
+
+
 wave3_manova_diagnostics <- function(model) {
   resid <- stats::residuals(model)
   shapiro_p <- apply(resid, 2, function(z) stats::shapiro.test(z)$p.value)
@@ -105,7 +131,8 @@ wave3_manova_diagnostics <- function(model) {
     min_shapiro_p = min(shapiro_p),
     shapiro_p = shapiro_p,
     skewness = shape["skewness", ],
-    excess_kurtosis = shape["excess_kurtosis", ]
+    excess_kurtosis = shape["excess_kurtosis", ],
+    mardia = wave3_mardia(resid)
   )
 }
 
@@ -126,12 +153,17 @@ wave3_check_assumptions <- function(model, claim_id, min_shapiro = 0.001) {
 }
 
 
-wave3_residual_diagnostics_table <- function(out_csv = "outputs/diagnostics/wave3_residual_diagnostics.csv") {
-  specs <- list(
+wave3_diagnostic_specs <- function() {
+  list(
     study_03 = list(model = fit_study_03_model(load_study_03_data()), outcomes = study_03_outcomes()),
     study_18 = list(model = fit_study_18_model(load_study_18_data()), outcomes = paste0("skill_", 1:8)),
     study_44 = list(model = fit_study_44_model(load_study_44_data()), outcomes = study_44_outcomes())
   )
+}
+
+
+wave3_residual_diagnostics_table <- function(out_csv = "outputs/diagnostics/wave3_residual_diagnostics.csv") {
+  specs <- wave3_diagnostic_specs()
   rows <- purrr::map_dfr(names(specs), function(sid) {
     d <- wave3_manova_diagnostics(specs[[sid]]$model)
     tibble::tibble(
@@ -142,6 +174,31 @@ wave3_residual_diagnostics_table <- function(out_csv = "outputs/diagnostics/wave
       skewness = as.numeric(d$skewness),
       excess_kurtosis = as.numeric(d$excess_kurtosis),
       normality_flag = as.numeric(d$shapiro_p) < 0.001
+    )
+  })
+  dir.create(dirname(out_csv), recursive = TRUE, showWarnings = FALSE)
+  readr::write_csv(rows, out_csv)
+  invisible(rows)
+}
+
+
+wave3_multivariate_normality_table <- function(out_csv = "outputs/diagnostics/wave3_multivariate_normality.csv") {
+  specs <- wave3_diagnostic_specs()
+  rows <- purrr::map_dfr(names(specs), function(sid) {
+    d <- wave3_manova_diagnostics(specs[[sid]]$model)
+    m <- d$mardia
+    tibble::tibble(
+      study_id = sid,
+      n = d$n,
+      n_outcomes = d$n_outcomes,
+      mardia_skewness = m$mardia_skewness,
+      mardia_skew_stat = m$mardia_skew_stat,
+      mardia_skew_df = m$mardia_skew_df,
+      mardia_skew_p = m$mardia_skew_p,
+      mardia_kurtosis = m$mardia_kurtosis,
+      mardia_kurtosis_expected = m$mardia_kurtosis_expected,
+      mardia_kurt_z = m$mardia_kurt_z,
+      mardia_kurt_p = m$mardia_kurt_p
     )
   })
   dir.create(dirname(out_csv), recursive = TRUE, showWarnings = FALSE)
