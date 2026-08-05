@@ -180,6 +180,16 @@ load_study_37_full_glmm_data <- function(path = "data/raw/study_37/osf_data.csv"
 }
 
 
+study_37_focal_coefficient <- function(claim_id) {
+  switch(
+    claim_id,
+    study_37_claim_01 = "HUMAN_family1",
+    study_37_claim_02 = "synchronous11",
+    stop("Unknown Study 37 claim: ", claim_id, call. = FALSE)
+  )
+}
+
+
 study_37_model_priors <- function(claim_id,prior_values,include_focal) {
 
   focal_coefficient <- study_37_focal_coefficient(claim_id)

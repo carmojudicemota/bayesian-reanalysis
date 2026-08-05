@@ -1,12 +1,3 @@
-study_37_focal_coefficient <- function(claim_id) {
-  switch(
-    claim_id,
-    study_37_claim_01 = "HUMAN_family1",
-    study_37_claim_02 = "synchronous11",
-    stop("Unknown Study 37 claim: ", claim_id, call. = FALSE)
-  )
-}
-
 study_37_prior_values <- function(focal_sd) {
   list(nuisance_sd = 1, intercept_sd = 2.5, random_sd = 1, focal_sd = focal_sd)
 }
