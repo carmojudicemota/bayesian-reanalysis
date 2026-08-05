@@ -1,0 +1,11 @@
+# Study 41 — original data source
+
+The file(s) in this folder are a **prepared** copy of the study's open data
+(format-converted, e.g. exported to CSV, and/or deidentified by the original authors).
+They are committed so the pipeline can run directly; they are not the pristine upload.
+
+Original open data: https://osf.io/7naj9/
+
+Prepared file(s) in this folder:
+- `BART_Content_Knowledge_Deidentified.xlsx`
+- `Untitled3.sav`

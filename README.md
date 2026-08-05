@@ -11,7 +11,7 @@ The project separates:
 5. prior-sensitivity and numerical-stability auditing;
 6. tables, figures, and reporting outputs.
 
-The repository is organised so that every claim marked `ready` can be reproduced from the raw study data, the locked R environment, and a single run-all script.
+The repository is organised so that every claim marked `ready` can be reproduced from the prepared study data committed under `data/raw/`, the locked R environment, and a single run-all script.
 
 ---
 
@@ -71,7 +71,7 @@ Claims marked `held` are out of scope and are excluded from the completed pipeli
 │   ├── priors_wave3.csv       # prior scales for Wave 3
 │   └── README_priors.md       # prior specification and justification
 ├── data/
-│   ├── raw/                   # third-party study datasets (per study_XX/)
+│   ├── raw/                   # prepared study data (per study_XX/; see DATA_SOURCE.md)
 │   ├── source/                # curated project inputs
 │   └── derived/               # generated analysis-ready data (claims.csv)
 ├── R/
@@ -197,9 +197,13 @@ The run-all script refreshes the derived registry before running the analysis.
 
 ---
 
-## Raw data
+## Data and its origin
 
-Raw datasets are stored under `data/raw/study_XX/` and referenced by paths relative to the repository root. These are third-party research datasets included to support reproducibility. Ownership remains with the original authors or data providers; consult the relevant articles, repositories, and licences before redistributing or reusing individual datasets. Their presence here is not a transfer of ownership or permission for unrestricted redistribution.
+The datasets under `data/raw/study_XX/` are **prepared** copies of each study's open data — format-converted (e.g. exported to CSV) and, where the original authors did so, deidentified. They are not the pristine uploads; because the pipeline reads these prepared files directly, they are committed with the project.
+
+The underlying open data for every study is publicly available. Each study's source (an OSF project or a PsychArchives DOI) is recorded in `data/raw/study_XX/DATA_SOURCE.md`, with a full index in `data/raw/DATA_SOURCES.md`. There is no automated fetch step: the prepared data is committed, and these notes document where the originals live.
+
+These are third-party research datasets included to support reproducibility. Ownership remains with the original authors or data providers; consult the relevant articles, repositories, and licences before redistributing or reusing individual datasets. Their presence here is not a transfer of ownership or permission for unrestricted redistribution.
 
 ---
 
