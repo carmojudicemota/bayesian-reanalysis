@@ -604,46 +604,101 @@ ggsave("outputs/figures/diverging_jeffreys_grades_by_family_plain.png", divergin
        width = 10, height = fam_h, dpi = 300, limitsize = FALSE)
 
 
-plot_bf_within_frequentist <- function(
-    in_path = "outputs/tables/concordance_claim_level.csv",
-    out_path = "outputs/figures/bf_within_frequentist.png") {
-  d <- read_csv(in_path, show_col_types = FALSE) |>
-    transmute(
-      sig = frequentist_result == "Significant",
-      verdict = factor(bf_conclusion, levels = c("H1", "Inconclusive", "H0"))
+plot_bf_within_frequentist <- function(in_path = "outputs/tables/concordance_claim_level.csv",
+                                       out_path = "outputs/figures/bf_within_frequentist.png") {
+  d <- readr::read_csv(in_path, show_col_types = FALSE) |>
+    dplyr::transmute(panel = dplyr::if_else(frequentist_result == "Significant",
+                                            "Significant","Non-significant"),
+      verdict = factor(as.character(bf_conclusion),levels = c("H1", "Inconclusive", "H0"))
     ) |>
-    count(sig, verdict, .drop = FALSE) |>
-    group_by(sig) |>
-    mutate(
-      N = sum(n),
-      pct = 100 * n / N,
-      panel = if_else(sig, sprintf("Significant  (n = %d)", N),
-                           sprintf("Non-significant  (n = %d)", N)),
-      lab = if_else(n > 0, sprintf("%d\n(%.0f%%)", n, pct), "")
+    dplyr::mutate(panel = factor(panel,levels = c("Significant", "Non-significant"))
     ) |>
-    ungroup()
-  d$panel <- factor(d$panel, levels = unique(d$panel[order(!d$sig)]))
-  cols <- c(H1 = "#2166AC", Inconclusive = "#9E9E9E", H0 = "#B2182B")
-  p <- ggplot(d, aes(x = "", y = n, fill = verdict)) +
-    geom_col(width = 1, colour = "white", linewidth = 0.7) +
-    coord_polar(theta = "y") +
-    facet_wrap(~ panel) +
-    geom_text(aes(label = lab), position = position_stack(vjust = 0.5),
-              colour = "white", fontface = "bold", size = 3.6) +
-    scale_fill_manual(values = cols, drop = FALSE, name = NULL,
-                      labels = c(H1 = expression(BF[10] >= 3),
-                                 Inconclusive = expression(1/3 < BF[10] < 3),
-                                 H0 = expression(BF[10] <= 1/3))) +
-    labs(title = "Bayesian evidence within each frequentist outcome") +
+    dplyr::count(panel, verdict, .drop = FALSE) |>
+    dplyr::group_by(panel) |>
+    dplyr::mutate(N = sum(n), proportion = n / N,
+                  label = dplyr::if_else(n == 0,"",paste0(n,"\n",scales::percent(proportion, accuracy = 1)))
+    ) |> 
+    dplyr::ungroup()
+  totals <- d |> 
+    dplyr::distinct(panel, N)
+  cols <- c(H1 = "#08306B", Inconclusive = "#A6A6A6", H0 = "#92C5DE")
+  p <- ggplot(d,aes(x = 2,y = proportion,fill = verdict)) +
+    geom_col(width = 0.72,colour = "white",linewidth = 1) +
+    geom_text(aes(label = label),position = position_stack(vjust = 0.5),colour = "white",fontface = "bold",size = 4,lineheight = 0.95) +
+    geom_text(data = totals,aes(x = 0,y = 0,label = paste0("n = ", N)),
+              inherit.aes = FALSE,colour = "grey25",fontface = "bold",size = 4.2) +
+    facet_wrap(~ panel,nrow = 1) +
+    scale_fill_manual(values = cols, breaks = c("H1", "Inconclusive", "H0"),
+                      labels = c(H1 = "Evidence for H1: BF10 ≥ 3",Inconclusive = "Inconclusive: 1/3 < BF10 < 3",H0 = "Evidence for H0: BF10 ≤ 1/3"),
+                      drop = FALSE,
+                      name = NULL) +
+    scale_x_continuous(limits = c(0, 2.45),expand = c(0, 0)) +
+    coord_polar(theta = "y",start = -pi / 2,clip = "off") +
+    labs(title = "Bayesian evidence within frequentist outcomes",subtitle = "") +
+    guides(fill = guide_legend(nrow = 1,byrow = TRUE)) +
     theme_void(base_size = 12) +
-    theme(legend.position = "bottom",
-          plot.title = element_text(face = "bold", hjust = 0.5),
-          strip.text = element_text(face = "bold", size = 12))
-  ggsave(out_path, p, width = 9, height = 5, dpi = 300)
+    theme(plot.background = element_rect(fill = "white",colour = NA),
+          panel.background = element_rect(fill = "white",colour = NA),
+          legend.background = element_rect(fill = "white",colour = NA),
+          legend.key = element_rect(fill = "white",colour = NA),
+          plot.title = element_text(face = "bold",size = 17,hjust = 0.5,margin = margin(b = 6)),
+          plot.subtitle = element_text(colour = "grey35", size = 10.5,hjust = 0.5,margin = margin(b = 16)),
+          strip.text = element_text(face = "bold",size = 13,margin = margin(b = 8)),
+          legend.position = "bottom",
+          legend.text = element_text(size = 9.5),
+          legend.spacing.x = unit(8, "pt"),
+          plot.margin = margin(15, 20, 10, 20))
+  ggsave(filename = out_path,plot = p,width = 10,height = 5.8,dpi = 300,bg = "white")
   invisible(p)
 }
-
 plot_bf_within_frequentist()
+
+plot_bayes_result_proportions <- function(in_path = "outputs/tables/concordance_claim_level.csv",
+                                          out_path = "outputs/figures/bayes_result_proportions.png") {
+  d <- readr::read_csv(in_path, show_col_types = FALSE) |>
+    dplyr::transmute(verdict = factor(as.character(bf_conclusion), levels = c("H1", "Inconclusive", "H0"))) |>
+    dplyr::count(verdict, .drop = FALSE) |>
+    dplyr::mutate(proportion = n / sum(n),
+                  label = dplyr::if_else(n > 0, paste0(n, "\n(", scales::percent(proportion, accuracy = 1), ")"), ""))
+  total_n <- sum(d$n)
+  cols <- c(H1 = "#08306B", Inconclusive = "#A6A6A6", H0 = "#92C5DE")
+  p <- ggplot2::ggplot(d, ggplot2::aes(x = 2, y = proportion, fill = verdict)) +
+    ggplot2::geom_col(width = 0.72, colour = "white", linewidth = 1) +
+    ggplot2::geom_text(
+      ggplot2::aes(label = label),
+      position = ggplot2::position_stack(vjust = 0.5),
+      colour = "white", fontface = "bold", size = 4, lineheight = 0.95
+    ) +
+    ggplot2::annotate(
+      "text", x = 0, y = 0, label = paste0("n = ", total_n),
+      colour = "grey20", fontface = "bold", size = 4.8
+    ) +
+    ggplot2::coord_polar(theta = "y", start = -pi / 2) +
+    ggplot2::scale_x_continuous(limits = c(0, 2.5), expand = c(0, 0)) +
+    scale_fill_manual(values = cols, breaks = c("H1", "Inconclusive", "H0"),
+                      labels = c(H1 = "Evidence for H1: BF10 ≥ 3",Inconclusive = "Inconclusive: 1/3 < BF10 < 3",H0 = "Evidence for H0: BF10 ≤ 1/3"),
+                      drop = FALSE,
+                      name = NULL) +
+    ggplot2::labs(
+      title = "Distribution of Bayesian conclusions",
+      subtitle = ""
+    ) +
+    ggplot2::theme_void(base_size = 12) +
+    ggplot2::theme(
+      plot.background = ggplot2::element_rect(fill = "white", colour = NA),
+      panel.background = ggplot2::element_rect(fill = "white", colour = NA),
+      legend.background = ggplot2::element_rect(fill = "white", colour = NA),
+      legend.key = ggplot2::element_rect(fill = "white", colour = NA),
+      plot.title = ggplot2::element_text(face = "bold", hjust = 0.5, size = 16),
+      plot.subtitle = ggplot2::element_text(hjust = 0.5, colour = "grey35", size = 10.5),
+      legend.position = "bottom", legend.text = ggplot2::element_text(size = 10),
+      plot.margin = ggplot2::margin(15, 20, 15, 20)
+    )
+  ggplot2::ggsave(out_path, p, width = 7.5, height = 6, dpi = 300, bg = "white")
+  invisible(p)
+}
+plot_bayes_result_proportions()
+
 
 
 invisible(list(
@@ -677,7 +732,7 @@ canonical_figures <- c(
   "diverging_jeffreys_grades_by_family.png",
   "diverging_jeffreys_grades_by_family_plain.png",
   "detailed_evidence_rank_zoom.png", "problematic_claims_pvalues.png",
-  "bf_within_frequentist.png",
+  "bf_within_frequentist.png", "bayes_result_proportions.png",
   "stability_forest.png",
   "dataset_family_counts.png", "dataset_status_by_family.png",
   "dataset_role_by_family.png", "dataset_sample_size_by_family.png"
