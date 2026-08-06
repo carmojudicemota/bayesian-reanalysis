@@ -604,6 +604,48 @@ ggsave("outputs/figures/diverging_jeffreys_grades_by_family_plain.png", divergin
        width = 10, height = fam_h, dpi = 300, limitsize = FALSE)
 
 
+plot_bf_within_frequentist <- function(
+    in_path = "outputs/tables/concordance_claim_level.csv",
+    out_path = "outputs/figures/bf_within_frequentist.png") {
+  d <- read_csv(in_path, show_col_types = FALSE) |>
+    transmute(
+      sig = frequentist_result == "Significant",
+      verdict = factor(bf_conclusion, levels = c("H1", "Inconclusive", "H0"))
+    ) |>
+    count(sig, verdict, .drop = FALSE) |>
+    group_by(sig) |>
+    mutate(
+      N = sum(n),
+      pct = 100 * n / N,
+      panel = if_else(sig, sprintf("Significant  (n = %d)", N),
+                           sprintf("Non-significant  (n = %d)", N)),
+      lab = if_else(n > 0, sprintf("%d\n(%.0f%%)", n, pct), "")
+    ) |>
+    ungroup()
+  d$panel <- factor(d$panel, levels = unique(d$panel[order(!d$sig)]))
+  cols <- c(H1 = "#2166AC", Inconclusive = "#9E9E9E", H0 = "#B2182B")
+  p <- ggplot(d, aes(x = "", y = n, fill = verdict)) +
+    geom_col(width = 1, colour = "white", linewidth = 0.7) +
+    coord_polar(theta = "y") +
+    facet_wrap(~ panel) +
+    geom_text(aes(label = lab), position = position_stack(vjust = 0.5),
+              colour = "white", fontface = "bold", size = 3.6) +
+    scale_fill_manual(values = cols, drop = FALSE, name = NULL,
+                      labels = c(H1 = expression(BF[10] >= 3),
+                                 Inconclusive = expression(1/3 < BF[10] < 3),
+                                 H0 = expression(BF[10] <= 1/3))) +
+    labs(title = "Bayesian evidence within each frequentist outcome") +
+    theme_void(base_size = 12) +
+    theme(legend.position = "bottom",
+          plot.title = element_text(face = "bold", hjust = 0.5),
+          strip.text = element_text(face = "bold", size = 12))
+  ggsave(out_path, p, width = 9, height = 5, dpi = 300)
+  invisible(p)
+}
+
+plot_bf_within_frequentist()
+
+
 invisible(list(
   evidence_plane = evidence_plane,
   concordance = concordance_plot,
@@ -635,6 +677,7 @@ canonical_figures <- c(
   "diverging_jeffreys_grades_by_family.png",
   "diverging_jeffreys_grades_by_family_plain.png",
   "detailed_evidence_rank_zoom.png", "problematic_claims_pvalues.png",
+  "bf_within_frequentist.png",
   "stability_forest.png",
   "dataset_family_counts.png", "dataset_status_by_family.png",
   "dataset_role_by_family.png", "dataset_sample_size_by_family.png"
