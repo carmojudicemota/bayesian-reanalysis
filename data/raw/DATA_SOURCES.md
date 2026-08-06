@@ -1,38 +1,36 @@
 # Original data sources
 
-The files under `data/raw/` are **prepared** copies of each study's open data
-(format-converted to CSV where needed, and/or deidentified by the original authors).
-They are committed so the pipeline runs directly; they are not the pristine uploads.
+The files under `data/raw/` are **prepared** copies of each study's open data. They are committed so the pipeline runs directly.
 Each `data/raw/study_XX/DATA_SOURCE.md` records where the underlying open data lives.
 
-| Study | Source |
-|---|---|
-| 03 | [osf: gtyaj](https://osf.io/gtyaj/) |
-| 05 | [osf: tvgky](https://osf.io/tvgky/) |
-| 06 | [osf: zcqjr](https://osf.io/zcqjr/?view_only=ecea36bb241b4304b4167016007fdf15) |
-| 10 | [osf: j8qph](https://osf.io/j8qph/) |
-| 13 | [osf: my6dj](https://osf.io/my6dj/) |
-| 14 | [osf: g5qdz](https://osf.io/g5qdz/) |
-| 18 | [osf: 9f5mb](https://osf.io/9f5mb/) |
-| 20 | [psycharchives: 10.23668/psycharchives.2621](https://doi.org/10.23668/psycharchives.2621) |
-| 21 | [osf: mh9pe](https://osf.io/mh9pe/) |
-| 22 | [osf: dzpxs](https://osf.io/dzpxs/?view_only=b20524c3997a4ac08d9c6f4d761cc91c) |
-| 26 | [osf: rnpz2](https://osf.io/rnpz2/?view_only=0e3132bbf97148d1aa84d8b78d10ec9b) |
-| 27 | [osf: rvcmy](https://osf.io/rvcmy/) |
-| 29 | [osf: ptvg4](https://osf.io/ptvg4/) |
-| 30 | [osf: 7jj5t](https://osf.io/7jj5t/) |
-| 33 | [osf: k4vcy](https://osf.io/k4vcy/) |
-| 35 | [osf: ymezx](https://osf.io/ymezx/) |
-| 37 | [osf: wabvs](https://osf.io/wabvs/) |
-| 39 | [osf: wdu5k](https://osf.io/wdu5k/) |
-| 40 | [osf: a6gbn](https://osf.io/a6gbn/) |
-| 41 | [osf: 7naj9](https://osf.io/7naj9/) |
-| 43 | [osf: wc3kh](https://osf.io/wc3kh/) |
-| 44 | [osf: qxs2m](https://osf.io/qxs2m/) |
-| 45 | [osf: z5xj8](https://osf.io/z5xj8/) |
-| 47 | [osf: 7txp2](https://osf.io/7txp2/) |
-| 49 | [osf: 54qgs](https://osf.io/54qgs/) |
-| 51 | [osf: 96fbr](https://osf.io/96fbr/) |
-| 53 | [osf: rhzc8](https://osf.io/rhzc8/) |
-| 55 | [osf: kw9n7](https://osf.io/kw9n7/) |
-| 60 | [osf: u2rnp](https://osf.io/u2rnp/) |
+| Study | Authors | Article | DOI | Source |
+|---|---|---|---|---|
+| 03 | Virginia B. Wickline; Carmen Ford; Regan A. R. Gurung; Drew Appleby | *Can Syllabus Snapshots Predict Student Perceptions of Course and Instructor?* | [10.1037/stl0000432](https://doi.org/10.1037/stl0000432) | [OSF: gtyaj](https://osf.io/gtyaj/) |
+| 05 | Bridgette M. Hard; Joshua M. Lovett; Shannon T. Brady | *What Do Students Remember About Introductory Psychology, Years Later?* | [10.1037/stl0000136](https://doi.org/10.1037/stl0000136) | [OSF: tvgky](https://osf.io/tvgky/) |
+| 06 | Alison E. Kelly; Virginia Clinton-Lisell | *Strengthening Online Psychology Students’ Sense of Belonging with Social Annotation: An Experimental Study* | [10.1177/14757257241295302](https://doi.org/10.1177/14757257241295302) | [OSF: zcqjr](https://osf.io/zcqjr/?view_only=ecea36bb241b4304b4167016007fdf15) |
+| 10 | Alyssa C. Smith; David C. S. Filice; Heather Poole; Ayesha Khan; Kate Whalen; Daniel Smilek | *Indicators of Student Well-Being in Canadian Undergraduates Before and During the COVID-19 Pandemic* | [10.1037/stl0000338](https://doi.org/10.1037/stl0000338) | [OSF: j8qph](https://osf.io/j8qph/) |
+| 13 | Carlee Beth Hawkins; Alexis Z. Camp; Matthew P. Schunke | *Experimental Evaluation of Implicit Bias Education in the College Classroom* | [10.1177/00986283221142016](https://doi.org/10.1177/00986283221142016) | [OSF: my6dj](https://osf.io/my6dj/) |
+| 14 | Stephanie M. Anglin; John E. Edlund | *Perceived Need for Reform in Field-Wide Methods and the Teaching of Replication, Interpretation, and Transparency* | [10.1177/1475725719859453](https://doi.org/10.1177/1475725719859453) | [OSF: g5qdz](https://osf.io/g5qdz/) |
+| 18 | Madeleine Pownall; Chloe Thompson; Pam Blundell-Birtill; Samantha J. Newell; Richard Harris | *Does “Psychological Literacy” Feature in Non-Psychology Degrees? A Cross-Discipline Study of Student Perceptions* | [10.1177/00986283221130298](https://doi.org/10.1177/00986283221130298) | [OSF: 9f5mb](https://osf.io/9f5mb/) |
+| 20 | Tom Rosman; Martin Kerwer | *Mechanisms of Epistemic Change: The Roles of Reflection and Social Interaction* | [10.1177/14757257221098860](https://doi.org/10.1177/14757257221098860) | [PsychArchives: 10.23668/psycharchives.2621](https://doi.org/10.23668/psycharchives.2621) |
+| 21 | William J. Chopik; Ryan H. Bremner; Andrew M. Defever; Victor N. Keller | *How (and Whether) to Teach Undergraduates About the Replication Crisis in Psychological Science* | [10.1177/0098628318762900](https://doi.org/10.1177/0098628318762900) | [OSF: mh9pe](https://osf.io/mh9pe/) |
+| 22 | Nina Udvardi-Lakos; Marlene Weirich; Kim Lützenburger; Julia Asbrand; Alexander Renkl | *Combining a Direct and Indirect Training Approach for Cross-Domain Competences: The Case of the Course “Pedagogy for Psychotherapists”* | [10.1177/14757257231163482](https://doi.org/10.1177/14757257231163482) | [OSF: dzpxs](https://osf.io/dzpxs/?view_only=b20524c3997a4ac08d9c6f4d761cc91c) |
+| 26 | Alison E. Kelly; Jenna N. Laurin; Virginia Clinton-Lisell | *Making Psychology’s Hidden Figures Visible Using Open Educational Resources: A Replication and Extension Study* | [10.1177/00986283221108129](https://doi.org/10.1177/00986283221108129) | [OSF: rnpz2](https://osf.io/rnpz2/?view_only=0e3132bbf97148d1aa84d8b78d10ec9b) |
+| 27 | William J. Chopik; Jeewon Oh | *Implementing the Fast Friends Procedure to Build Camaraderie in a Remote Synchronous Teaching Setting* | [10.1177/00986283211065746](https://doi.org/10.1177/00986283211065746) | [OSF: rvcmy](https://osf.io/rvcmy/) |
+| 29 | Beth Morling; Jeong Min Lee | *Are “Associate Professors” Better Than “Associate Teaching Professors”? Student and Faculty Perceptions of Faculty Titles* | [10.1177/0098628319888087](https://doi.org/10.1177/0098628319888087) | [OSF: ptvg4](https://osf.io/ptvg4/) |
+| 30 | Alan Jern | *A Preliminary Study of the Educational Benefits of Conducting Replications in the Classroom* | [10.1037/stl0000104](https://doi.org/10.1037/stl0000104) | [OSF: 7jj5t](https://osf.io/7jj5t/) |
+| 33 | Gili Freedman; India G. Oates; Shannon Elise Kirk | *Applying Social Psychology to a Global Crisis: Student Engagement in a Laboratory Class During the COVID-19 Pandemic* | [10.1037/stl0000227](https://doi.org/10.1037/stl0000227) | [OSF: k4vcy](https://osf.io/k4vcy/) |
+| 35 | Roberta Ekuni; Ohana T. Macacare; Sabine Pompeia | *Reducing the Negative Effects of Multitasking on Online or Distance Learning by Using Retrieval Practice* | [10.1037/stl0000314](https://doi.org/10.1037/stl0000314) | [OSF: ymezx](https://osf.io/ymezx/) |
+| 37 | C. Donnan Gravelle; Raoul Roberts; Elizabeth S. Che; Arshia K. Lodhi; Nicole M. Zapparrata; Teresa M. Ober; Jessica E. Brodsky; Patricia J. Brooks | *Online Course Formats and Student Self-Efficacy in Academic Skills Predict Persistence in Introductory Psychology* | [10.1037/stl0000356](https://doi.org/10.1037/stl0000356) | [OSF: wabvs](https://osf.io/wabvs/) |
+| 39 | Ashley M. Biddle; Virginia Clinton-Lisell | *“The Pictures Allowed Me to Connect to the Material More”: Student Perceptions of a Diversity-Focused Open Pedagogy Assignment* | [10.1037/stl0000385](https://doi.org/10.1037/stl0000385) | [OSF: wdu5k](https://osf.io/wdu5k/) |
+| 40 | Sydney Y. Wood; Victoria L. Cross | *Improving Students’ Understanding Through Metacognition About Instructor Feedback: A Causal Modeling Approach* | [10.1037/stl0000412](https://doi.org/10.1037/stl0000412) | [OSF: a6gbn](https://osf.io/a6gbn/) |
+| 41 | Andrew J. Kelly; Audrey E. Parrish | *Don’t Pop It! Modifying the Balloon Analogue Risk Task for a Course-Based Research Experience* | [10.1177/00986283251313760](https://doi.org/10.1177/00986283251313760) | [OSF: 7naj9](https://osf.io/7naj9/) |
+| 43 | Julia Glaser; Tobias Richter | *The Testing Effect in the Lecture Hall: Does It Transfer to Content Studied but Not Practiced?* | [10.1177/00986283231218943](https://doi.org/10.1177/00986283231218943) | [OSF: wc3kh](https://osf.io/wc3kh/) |
+| 44 | Michelle L. Rivers; Addison L. Babineau; Katherine P. Neely; Sarah K. Tauber | *How Do Students and Faculty Consider Numerical Ratings and Comments About Daily Quizzing When Interpreting Student Evaluations of Teaching?* | [10.1177/00986283231199454](https://doi.org/10.1177/00986283231199454) | [OSF: qxs2m](https://osf.io/qxs2m/) |
+| 45 | Adam John Privitera; Jue Wang; Xin Jiang | *Understanding of Psychological Literacy: Comparative Insights From Undergraduates in China and the United Kingdom* | [10.1177/00986283241247181](https://doi.org/10.1177/00986283241247181) | [OSF: z5xj8](https://osf.io/z5xj8/) |
+| 47 | Guy A. Boysen; Peyton N. Osgood | *Test Format, Learning Confidence, and Perceptions of Teaching Effectiveness* | [10.1177/00986283231226187](https://doi.org/10.1177/00986283231226187) | [OSF: 7txp2](https://osf.io/7txp2/) |
+| 49 | Leamarie T. Gordon; Gregory I. Hughes; Amy M. Smith | *Modernizing the Flipped Classroom: Replacing Lecture Time With Asynchronous Spaced Retrieval* | [10.1177/00986283251325842](https://doi.org/10.1177/00986283251325842) | [OSF: 54qgs](https://osf.io/54qgs/) |
+| 51 | Virginia Clinton-Lisell; Alison E. Kelly | *Are Scientific Memes Motivating and Does Public Sharing Affect Motivation?* | [10.1177/14757257231197359](https://doi.org/10.1177/14757257231197359) | [OSF: 96fbr](https://osf.io/96fbr/) |
+| 53 | Michelle Wong; Leigh M. Marshall; Haley C. Blank; Bridgette Martin Hard | *Up Close and Personal: Examining Effects of Instructor Video Presence on Students’ Sense of Connection* | [10.1037/stl0000306](https://doi.org/10.1037/stl0000306) | [OSF: rhzc8](https://osf.io/rhzc8/) |
+| 55 | Lauren E. Bates; Sarah J. Myers; Edward L. DeLosh; Matthew G. Rhodes | *The Learning Benefits of Mastery Quizzing Versus Other Quizzing Methods* | [10.1177/14757257241301733](https://doi.org/10.1177/14757257241301733) | [OSF: kw9n7](https://osf.io/kw9n7/) |
+| 60 | Melanie R. Maimon; Kristina Howansky; Diana T. Sanchez | *Fostering Inclusivity: Exploring the Impact of Identity Safety Cues and Instructor Gender on Students’ Impressions and Belonging* | [10.1177/00986283211043779](https://doi.org/10.1177/00986283211043779) | [OSF: u2rnp](https://osf.io/u2rnp/) |
