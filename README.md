@@ -199,9 +199,7 @@ The run-all script refreshes the derived registry before running the analysis.
 
 ## Data and its origin
 
-The datasets under `data/raw/study_XX/` are **prepared** copies of each study's open data — format-converted (e.g. exported to CSV) and, where the original authors did so, deidentified. They are not the pristine uploads; because the pipeline reads these prepared files directly, they are committed with the project.
-
-The underlying open data for every study is publicly available. Each study's source (an OSF project or a PsychArchives DOI) is recorded in `data/raw/study_XX/DATA_SOURCE.md`, with a full index in `data/raw/DATA_SOURCES.md`. There is no automated fetch step: the prepared data is committed, and these notes document where the originals live.
+The datasets under `data/raw/study_XX/` are copies of each study's open data. The underlying open data for every study is publicly available. Each study's source (an OSF project or a PsychArchives DOI) is recorded in `data/raw/study_XX/DATA_SOURCE.md`, with a full index in `data/raw/DATA_SOURCES.md`. There is no automated fetch step: the prepared data is committed, and these notes document where the originals live.
 
 These are third-party research datasets included to support reproducibility. Ownership remains with the original authors or data providers; consult the relevant articles, repositories, and licences before redistributing or reusing individual datasets. Their presence here is not a transfer of ownership or permission for unrestricted redistribution.
 
@@ -222,4 +220,4 @@ Commit `renv.lock` together with the code that requires it. Do not update the lo
 
 ## Project status
 
-The repository is reproducible for all claims marked `ready` via `source("scripts/00_run_all.R")`. All three Bayesian waves, including every Wave 3 study, are integrated, and the concordance classification covers the full set of 47 ready claims (38 concordant, 9 inconclusive, 0 discordant). Claims marked `held` are explicitly excluded from the completed pipeline due to scope reasons.
+The repository is reproducible for all claims marked `ready` via `source("scripts/00_run_all.R")`. All three Bayesian waves, including every Wave 3 study, are integrated, and the concordance classification covers the full set of 47 ready claims (38 concordant, 9 inconclusive, 0 discordant). Claims marked `held` are explicitly excluded from the completed pipeline due to scope reasons (e.g. not reproducible).
