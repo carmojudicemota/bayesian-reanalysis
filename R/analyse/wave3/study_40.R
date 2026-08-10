@@ -198,6 +198,50 @@ study_40_predictive_comparison <- function(
   invisible(row)
 }
 
+
+study_40_predictive_sweep <- function(
+    scales = study_40_loading_scales(),
+    cache_dir = dirname(study_40_cache_path()),
+    output_path = "outputs/intermediate/study_40_predictive_sweep.csv") {
+  fit_path <- function(model, label) file.path(cache_dir, paste0("study_40_fit", model, "_", label, ".rds"))
+  missing_fits <- vapply(names(scales), function(label) {
+    !file.exists(fit_path(7, label)) || !file.exists(fit_path(8, label))
+  }, logical(1))
+  if (any(missing_fits)) {
+    message("Study 40 per-scale fits not found; running the loading sweep to produce them.")
+    run_study_40_bayes_factors(loading_scales = scales)
+  }
+  rows <- purrr::map_dfr(seq_along(scales), function(i) {
+    label <- names(scales)[i]
+    fit7 <- readRDS(fit_path(7, label))
+    fit8 <- readRDS(fit_path(8, label))
+    m7 <- lavaan::fitMeasures(fit7, c("waic", "looic"))
+    m8 <- lavaan::fitMeasures(fit8, c("waic", "looic"))
+    looic7 <- as.numeric(m7[["looic"]])
+    looic8 <- as.numeric(m8[["looic"]])
+    waic7 <- as.numeric(m7[["waic"]])
+    waic8 <- as.numeric(m8[["waic"]])
+    elpd_diff <- -(looic7 - looic8) / 2
+    tibble::tibble(
+      claim_id = "study_40_claim_01",
+      prior_label = label,
+      loading_scale = as.numeric(scales[i]),
+      looic_alt = looic7,
+      looic_null = looic8,
+      looic_diff_alt_minus_null = looic7 - looic8,
+      elpd_diff_alt_minus_null = elpd_diff,
+      pseudo_bf10 = exp(elpd_diff),
+      waic_alt = waic7,
+      waic_null = waic8,
+      waic_diff_alt_minus_null = waic7 - waic8
+    )
+  })
+  dir.create(dirname(output_path), recursive = TRUE, showWarnings = FALSE)
+  readr::write_csv(rows, output_path, na = "")
+  print(as.data.frame(rows[, c("prior_label", "loading_scale", "elpd_diff_alt_minus_null", "pseudo_bf10", "looic_diff_alt_minus_null")]))
+  invisible(rows)
+}
+
 compute_study_40_bayes_factors <- function(claim, priors = NULL, cache_path = study_40_cache_path()) {
   if (!file.exists(cache_path)) {
     stop("Study 40 cache not found at ", cache_path, ". Run run_study_40_bayes_factors() first.", call. = FALSE)

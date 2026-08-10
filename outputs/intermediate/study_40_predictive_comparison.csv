@@ -1,0 +1,2 @@
+claim_id,model_alt,model_null,waic_alt,waic_null,waic_diff_alt_minus_null,looic_alt,looic_null,looic_diff_alt_minus_null,elpd_diff_alt_minus_null
+study_40_claim_01,Model 7: group-specific post-intervention loadings,Model 8: loadings constrained equal across groups,4382.382765863101,4380.675648946973,1.7071169161281432,4382.437224221112,4380.835065006667,1.602159214445237,-0.8010796072226185

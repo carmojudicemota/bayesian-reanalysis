@@ -7,6 +7,7 @@ source("R/analyse/wave2/study_55.R")
 message("Robustness suite: Study 40 loading sweep + WAIC/LOO ...")
 run_study_40_bayes_factors()
 study_40_predictive_comparison()
+study_40_predictive_sweep()
 
 message("Robustness suite: Study 37 Cauchy(0, 2.5) focal-prior check ...")
 run_study_37_gelman_cauchy_sensitivity()
