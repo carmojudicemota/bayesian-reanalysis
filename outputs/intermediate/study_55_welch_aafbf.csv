@@ -1,0 +1,2 @@
+claim_id,study_id,prior_label,bf10,log_bf10,log10_bf10,bf_error,model_null,model_alt,method,prior_family
+study_55_claim_01,study_55,welch_aafbf_sensitivity,11002617676536847e5,48.44983507496303,21.041496022179068,,equal condition means (Welch heteroscedastic),condition means differ,bain_welch_aafbf,welch_aafbf

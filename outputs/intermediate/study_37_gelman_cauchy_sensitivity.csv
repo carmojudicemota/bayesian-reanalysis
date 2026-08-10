@@ -1,0 +1,3 @@
+claim_id,study_id,prior_label,rscale,bf10,log_bf10,log10_bf10,bf_error,bridge_sd_log10,bridge_span_log10,bridge_repetitions,model_null,model_alt,method
+study_37_claim_01,study_37,gelman_cauchy_sensitivity,2.5,17.927081846292186,2.886312521794281,1.2535096012635154,,0.004855332732935177,0.012105396307305671,5,full Bayesian GLMM without HUMAN_family1,"full Bayesian GLMM with HUMAN_family1 (Cauchy(0, 2.5) focal prior)",full_bayesian_glmm_bridge_sampling_cauchy
+study_37_claim_02,study_37,gelman_cauchy_sensitivity,2.5,1.8269590099525206,0.6026528414312792,0.26172880353691996,,0.004858761432191462,0.011287293016208733,5,full Bayesian GLMM without synchronous11,"full Bayesian GLMM with synchronous11 (Cauchy(0, 2.5) focal prior)",full_bayesian_glmm_bridge_sampling_cauchy
