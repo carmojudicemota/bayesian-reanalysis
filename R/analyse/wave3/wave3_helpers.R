@@ -137,17 +137,19 @@ wave3_manova_diagnostics <- function(model) {
 }
 
 
-wave3_check_assumptions <- function(model, claim_id, min_shapiro = 0.001) {
+wave3_check_assumptions <- function(model, claim_id, min_shapiro = 0.001, verbose = FALSE) {
   d <- wave3_manova_diagnostics(model)
-  message(sprintf(
-    "%s: N=%d, outcomes=%d, fraction b~%.3f, min Shapiro p=%.4g",
-    claim_id, d$n, d$n_outcomes, d$fraction_b, d$min_shapiro_p
-  ))
-  if (d$min_shapiro_p < min_shapiro) {
-    warning(sprintf(
-      "%s: residual normality is doubtful (min Shapiro p=%.4g); consider the Student-t robustness fit.",
-      claim_id, d$min_shapiro_p
-    ), call. = FALSE)
+  if (verbose) {
+    message(sprintf(
+      "%s: N=%d, outcomes=%d, fraction b~%.3f, min Shapiro p=%.4g",
+      claim_id, d$n, d$n_outcomes, d$fraction_b, d$min_shapiro_p
+    ))
+    if (d$min_shapiro_p < min_shapiro) {
+      warning(sprintf(
+        "%s: residual normality is doubtful (min Shapiro p=%.4g); consider the Student-t robustness fit.",
+        claim_id, d$min_shapiro_p
+      ), call. = FALSE)
+    }
   }
   invisible(d)
 }
