@@ -216,7 +216,7 @@ draw_dumbbell <- function(df, xlim, title, subtitle) {
     geom_point(aes(wid, row), colour = prior_cols[["wide"]],    size = 2.1, na.rm = TRUE) +
     geom_segment(data = flag, aes(x = lo, xend = hi, y = row, yend = row), colour = "grey20", linewidth = 0.6, linetype = "22", inherit.aes = FALSE) +
     geom_point(data = flag, aes(pri, row), shape = 21, size = 3.8, stroke = 1.1, colour = "grey15", fill = NA, inherit.aes = FALSE) +
-    geom_text(data = flag, aes(pri, row + 0.45, label = "classified by WAIC/LOO (BF prior-sensitive)"), size = 2.3, colour = "grey15", fontface = "italic", inherit.aes = FALSE) +
+    geom_text(data = flag, aes(pri, row + 0.45, label = "BF prior-fragile; WAIC/LOO reported separately"), size = 2.3, colour = "grey15", fontface = "italic", inherit.aes = FALSE) +
     scale_fill_manual(values = band_fill, name = "Jeffreys grade") +
     scale_colour_manual(values = c(changes = "#D55E00", stable = "#4477AA"), name = NULL,
                         labels = c(changes = "Category changes", stable = "Category stable")) +
