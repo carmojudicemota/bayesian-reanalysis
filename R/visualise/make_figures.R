@@ -202,6 +202,7 @@ jeff_sec_axis <- function() ggplot2::sec_axis(~ ., breaks = tr_asinh(jeff_log10)
 
 draw_dumbbell <- function(df, xlim, title, subtitle) {
   df <- df |> dplyr::mutate(row = rank(primary, ties.method = "first"))
+  flag <- df |> dplyr::filter(claim_id == "study_40_claim_01")
   keep <- jeff_log10 >= xlim[1] & jeff_log10 <= xlim[2]
   vl <- jeff_lines[jeff_lines >= xlim[1] & jeff_lines <= xlim[2]]
   ggplot(df) +
@@ -213,6 +214,9 @@ draw_dumbbell <- function(df, xlim, title, subtitle) {
     geom_point(aes(nar, row), colour = prior_cols[["narrow"]],  size = 2.1, na.rm = TRUE) +
     geom_point(aes(pri, row), colour = prior_cols[["primary"]], size = 3.0, na.rm = TRUE) +
     geom_point(aes(wid, row), colour = prior_cols[["wide"]],    size = 2.1, na.rm = TRUE) +
+    geom_segment(data = flag, aes(x = lo, xend = hi, y = row, yend = row), colour = "grey20", linewidth = 0.6, linetype = "22", inherit.aes = FALSE) +
+    geom_point(data = flag, aes(pri, row), shape = 21, size = 3.8, stroke = 1.1, colour = "grey15", fill = NA, inherit.aes = FALSE) +
+    geom_text(data = flag, aes(pri, row + 0.45, label = "classified by WAIC/LOO (BF prior-sensitive)"), size = 2.3, colour = "grey15", fontface = "italic", inherit.aes = FALSE) +
     scale_fill_manual(values = band_fill, name = "Jeffreys grade") +
     scale_colour_manual(values = c(changes = "#D55E00", stable = "#4477AA"), name = NULL,
                         labels = c(changes = "Category changes", stable = "Category stable")) +
