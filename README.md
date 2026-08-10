@@ -134,7 +134,7 @@ Each Bayes factor's sidedness **follows the test the original article reported**
 
 ## Prior specification and robustness
 
-Prior scales are defined per wave in `config/priors_wave1.csv`, `priors_wave2.csv`, and `priors_wave3.csv`, with the rationale documented in `config/README_priors.md`. Each claim is evaluated at a **narrow**, **primary**, and **wide** prior scale.
+Prior scales are defined per wave in `config/priors_wave1.csv`, `priors_wave2.csv`, and `priors_wave3.csv`, with the rationale documented in `config/README_priors.md`. Most families with a free prior scale are evaluated at a **narrow**, **primary**, and **wide** scale; a few Wave 3 families (the primary MANOVA AFBFs and the Friedman analogue) have no free scale and are reported at a single specification.
 
 * The **primary** scale gives the reported Bayes factor and drives the concordance table.
 * The **narrow/wide** scales give a prior-sensitivity span for every claim, used to flag prior-fragile verdicts (those that cross a Jeffreys boundary between scales).
