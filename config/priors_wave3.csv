@@ -37,6 +37,8 @@ growth_blavaan,wide,loading_prior_sd,1.0
 growth_blavaan,primary,residual_corr_beta_a,2
 growth_blavaan,primary,residual_corr_beta_b,2
 growth_blavaan,primary,separation_strategy,srs
+growth_blavaan,secondary,comparison_criterion,waic_loo
+growth_blavaan,secondary,bf_status,prior_sensitive_not_used_for_classification
 friedman_afbf,primary,prior_type,adjusted_fractional
 friedman_afbf,primary,likelihood,latent_normal
 friedman_afbf,primary,fraction_rule,minimal_b_equals_J_over_n

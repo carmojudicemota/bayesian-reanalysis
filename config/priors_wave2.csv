@@ -21,3 +21,5 @@ regression_mixture_g,wide,rscale_cont,0.7071067811865476
 welch_anova_normal,narrow,contrast_prior_sd,0.25
 welch_anova_normal,primary,contrast_prior_sd,0.5
 welch_anova_normal,wide,contrast_prior_sd,0.7071067811865476
+welch_anova_normal,secondary_aafbf,method,adjusted_fractional_welch_anova_bain
+glmm_full,gelman_cauchy,focal_prior,cauchy_0_2.5
