@@ -121,30 +121,35 @@ study_44_model_labels <- function(claim_id) {
   )
 }
 
-compute_study_44_bayes_factors <- function(claim,priors = NULL,iter = 100000) {
+study_44_fractions <- function() {
+  c(primary = 1, sensitivity_b2 = 2, sensitivity_b3 = 3)
+}
+
+
+compute_study_44_bayes_factors <- function(claim,priors = NULL,iter = 100000,
+                                           fractions = study_44_fractions()) {
   data <- load_study_44_data()
   model <- fit_study_44_model(data)
   wave3_check_assumptions(model, claim$claim_id)
   hypothesis <- study_44_hypothesis(claim$claim_id)
-  
-  set.seed(123)
-  
-  result <- BFpack::BF(model,hypothesis = hypothesis,iter = iter)
-  
-  bf10 <- as.numeric(result$BFmatrix_confirmatory["H2", "H1"])
-  
   labels <- study_44_model_labels(claim$claim_id)
-  
-  wave3_row(
-    claim = claim,
-    bf10 = bf10,
-    model_null = labels$null,
-    model_alt = labels$alternative,
-    bf_family = "generalized_fractional",
-    prior_family = "fractional",
-    method = "BFpack_generalized_fractional",
-    prior_label = "primary"
-  )
+
+  set.seed(123)
+
+  purrr::map_dfr(seq_along(fractions), function(i) {
+    result <- BFpack::BF(model, hypothesis = hypothesis, fraction = as.numeric(fractions[i]), iter = iter)
+    bf10 <- as.numeric(result$BFmatrix_confirmatory["H2", "H1"])
+    wave3_row(
+      claim = claim,
+      bf10 = bf10,
+      model_null = labels$null,
+      model_alt = labels$alternative,
+      bf_family = "generalized_fractional",
+      prior_family = "fractional",
+      method = "BFpack_generalized_fractional",
+      prior_label = names(fractions)[i]
+    )
+  })
 }
 
 

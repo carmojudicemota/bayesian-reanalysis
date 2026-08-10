@@ -93,48 +93,74 @@ study_40_cache_path <- function() {
 }
 
 
-study_40_write_cache <- function(fit7, fit8, loading_scale = 0.5, cache_path = study_40_cache_path()) {
+study_40_loading_scales <- function() {
+  c(narrow = 0.25, primary = 0.5, wide = 1.0)
+}
+
+
+study_40_cache_row <- function(fit7, fit8, loading_scale, prior_label) {
   diag7 <- study_40_diagnostics(fit7)
   diag8 <- study_40_diagnostics(fit8)
   log_bf_7_8 <- as.numeric(lavaan::fitMeasures(fit7, "margloglik") -
                              lavaan::fitMeasures(fit8, "margloglik"))
-  result <- data.frame(
+  data.frame(
     claim_id = "study_40_claim_01",
+    prior_label = prior_label,
+    loading_scale = loading_scale,
     bf10 = exp(log_bf_7_8),
     log_bf10 = log_bf_7_8,
     rhat_max_m7 = diag7$rhat_max,
     rhat_max_m8 = diag8$rhat_max,
-    loading_scale = loading_scale,
     method = "blavaan_bgrowth_margloglik",
     generated_at = as.character(Sys.time()),
     stringsAsFactors = FALSE
   )
-  dir.create(dirname(cache_path), recursive = TRUE, showWarnings = FALSE)
-  utils::write.csv(result, cache_path, row.names = FALSE)
-  invisible(result)
 }
 
 
-run_study_40_bayes_factors <- function(cache_path = study_40_cache_path(), loading_scale = 0.5, seed = 123) {
+study_40_fit_scale <- function(loading_scale, prior_label, seed = 123,
+                               cache_path = study_40_cache_path(), save_fits = TRUE) {
   data <- load_study_40_data()
   fit7 <- fit_study_40_model_7(data, seed = seed, loading_scale = loading_scale)
   fit8 <- fit_study_40_model_8(data, seed = seed + 1, loading_scale = loading_scale)
   diag7 <- study_40_diagnostics(fit7)
   diag8 <- study_40_diagnostics(fit8)
   if (!diag7$converged || !diag8$converged) {
-    stop("Study 40 fits did not converge; not caching. rhat_max M7=", round(diag7$rhat_max, 4),
-         " M8=", round(diag8$rhat_max, 4), call. = FALSE)
+    stop("Study 40 fits did not converge at loading_scale ", loading_scale,
+         "; rhat_max M7=", round(diag7$rhat_max, 4), " M8=", round(diag8$rhat_max, 4), call. = FALSE)
   }
-  saveRDS(fit7, file.path(dirname(cache_path), "study_40_fit7.rds"))
-  saveRDS(fit8, file.path(dirname(cache_path), "study_40_fit8.rds"))
-  study_40_write_cache(fit7, fit8, loading_scale, cache_path)
+  if (save_fits) {
+    dir.create(dirname(cache_path), recursive = TRUE, showWarnings = FALSE)
+    saveRDS(fit7, file.path(dirname(cache_path), paste0("study_40_fit7_", prior_label, ".rds")))
+    saveRDS(fit8, file.path(dirname(cache_path), paste0("study_40_fit8_", prior_label, ".rds")))
+  }
+  study_40_cache_row(fit7, fit8, loading_scale, prior_label)
 }
 
 
-study_40_cache_from_saved <- function(fit7_path = "outputs/intermediate/study_40_fit7.rds",
-                                      fit8_path = "outputs/intermediate/study_40_fit8.rds",
-                                      loading_scale = 0.5, cache_path = study_40_cache_path()) {
-  study_40_write_cache(readRDS(fit7_path), readRDS(fit8_path), loading_scale, cache_path)
+run_study_40_bayes_factors <- function(cache_path = study_40_cache_path(),
+                                       loading_scales = study_40_loading_scales(), seed = 123) {
+  rows <- purrr::map_dfr(seq_along(loading_scales), function(i) {
+    study_40_fit_scale(as.numeric(loading_scales[i]), names(loading_scales)[i],
+                       seed = seed, cache_path = cache_path)
+  })
+  dir.create(dirname(cache_path), recursive = TRUE, showWarnings = FALSE)
+  utils::write.csv(rows, cache_path, row.names = FALSE)
+  invisible(rows)
+}
+
+
+study_40_cache_from_saved <- function(loading_scales = study_40_loading_scales(),
+                                      cache_path = study_40_cache_path()) {
+  rows <- purrr::map_dfr(seq_along(loading_scales), function(i) {
+    prior_label <- names(loading_scales)[i]
+    fit7 <- readRDS(file.path(dirname(cache_path), paste0("study_40_fit7_", prior_label, ".rds")))
+    fit8 <- readRDS(file.path(dirname(cache_path), paste0("study_40_fit8_", prior_label, ".rds")))
+    study_40_cache_row(fit7, fit8, as.numeric(loading_scales[i]), prior_label)
+  })
+  dir.create(dirname(cache_path), recursive = TRUE, showWarnings = FALSE)
+  utils::write.csv(rows, cache_path, row.names = FALSE)
+  invisible(rows)
 }
 
 
@@ -143,18 +169,23 @@ compute_study_40_bayes_factors <- function(claim, priors = NULL, cache_path = st
     stop("Study 40 cache not found at ", cache_path, ". Run run_study_40_bayes_factors() first.", call. = FALSE)
   }
   cached <- utils::read.csv(cache_path, stringsAsFactors = FALSE)
-  row <- cached[cached$claim_id == claim$claim_id, ]
-  if (nrow(row) != 1) {
+  rows <- cached[cached$claim_id == claim$claim_id, , drop = FALSE]
+  if (nrow(rows) < 1) {
     stop("No cached Study 40 result for ", claim$claim_id, ".", call. = FALSE)
   }
-  wave3_row(
-    claim = claim,
-    bf10 = row$bf10,
-    model_null = "Model 8: loadings constrained equal across groups",
-    model_alt = "Model 7: group-specific post-intervention loadings",
-    bf_family = "sem_marginal_likelihood",
-    prior_family = "blavaan_default",
-    method = "blavaan_bgrowth_blavCompare",
-    prior_label = "primary"
-  )
+  if (is.null(rows$prior_label)) {
+    rows$prior_label <- "primary"
+  }
+  purrr::map_dfr(seq_len(nrow(rows)), function(i) {
+    wave3_row(
+      claim = claim,
+      bf10 = rows$bf10[i],
+      model_null = "Model 8: loadings constrained equal across groups",
+      model_alt = "Model 7: group-specific post-intervention loadings",
+      bf_family = "sem_marginal_likelihood",
+      prior_family = "blavaan_default",
+      method = "blavaan_bgrowth_margloglik",
+      prior_label = rows$prior_label[i]
+    )
+  })
 }
