@@ -274,6 +274,57 @@ run_study_55_bayes_factors <- function(
   })
 }
 
+study_55_welch_group_stats <- function(data) {
+  data |>
+    dplyr::group_by(.data$condition) |>
+    dplyr::summarise(
+      mean = mean(.data$outcome),
+      variance = stats::var(.data$outcome),
+      n = dplyr::n(),
+      .groups = "drop"
+    )
+}
+
+study_55_welch_aafbf_sensitivity <- function(
+    output_path = "outputs/intermediate/study_55_welch_aafbf.csv") {
+  data <- load_study_55_data()
+  group_stats <- study_55_welch_group_stats(data)
+  estimates <- group_stats$mean
+  names(estimates) <- as.character(group_stats$condition)
+  sigma <- lapply(seq_len(nrow(group_stats)), function(i) {
+    matrix(group_stats$variance[[i]] / group_stats$n[[i]], 1, 1)
+  })
+  hypothesis <- paste(names(estimates), collapse = " = ")
+  set.seed(123)
+  result <- bain::bain(
+    estimates,
+    hypothesis = hypothesis,
+    n = group_stats$n,
+    Sigma = sigma,
+    group_parameters = 1,
+    joint_parameters = 0
+  )
+  bf_equal_vs_complement <- as.numeric(result$fit$BF.c[[1]])
+  bf10 <- 1 / bf_equal_vs_complement
+  row <- tibble::tibble(
+    claim_id = "study_55_claim_01",
+    study_id = "study_55",
+    prior_label = "welch_aafbf_sensitivity",
+    bf10 = bf10,
+    log_bf10 = log(bf10),
+    log10_bf10 = log10(bf10),
+    bf_error = NA_real_,
+    model_null = "equal condition means (Welch heteroscedastic)",
+    model_alt = "condition means differ",
+    method = "bain_welch_aafbf",
+    prior_family = "welch_aafbf"
+  )
+  dir.create(dirname(output_path), recursive = TRUE, showWarnings = FALSE)
+  readr::write_csv(row, output_path, na = "")
+  print(as.data.frame(row[, c("claim_id", "prior_label", "bf10", "log10_bf10")]))
+  invisible(row)
+}
+
 compute_study_55_bayes_factors <- function(
     claim,
     priors,

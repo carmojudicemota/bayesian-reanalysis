@@ -10,7 +10,8 @@ study_37_prior_grid <- function() {
 }
 
 fit_study_37_model <- function(formula, data, priors, seed,
-                               iter = 6000, warmup = 2000, chains = 4, cores = 4) {
+                               iter = 6000, warmup = 2000, chains = 4, cores = 4,
+                               control = list(adapt_delta = 0.8, max_treedepth = 10)) {
   brms::brm(
     formula = formula,
     data = data,
@@ -21,6 +22,7 @@ fit_study_37_model <- function(formula, data, priors, seed,
     chains = chains,
     cores = cores,
     seed = seed,
+    control = control,
     save_pars = brms::save_pars(all = TRUE),
     refresh = 0
   )
@@ -72,5 +74,50 @@ run_study_37_full_glmm <- function(output_path = "outputs/tables/study_37_full_g
   dir.create(dirname(output_path), recursive = TRUE, showWarnings = FALSE)
   readr::write_csv(rows, output_path, na = "")
   message(sprintf("Wrote %d Study 37 rows to %s", nrow(rows), output_path))
+  invisible(rows)
+}
+
+run_study_37_gelman_cauchy_sensitivity <- function(
+    output_path = "outputs/intermediate/study_37_gelman_cauchy_sensitivity.csv",
+    claims = c("study_37_claim_01", "study_37_claim_02"),
+    repetitions = 5L, cores = 4L, base_seed = 321L,
+    control = list(adapt_delta = 0.99, max_treedepth = 12)) {
+  data <- load_study_37_full_glmm_data()
+  prior_values <- study_37_prior_values(0.6)
+  rows <- purrr::map_dfr(claims, function(claim_id) {
+    focal_coef <- study_37_focal_coefficient(claim_id)
+    full_formula <- study_37_full_formula()
+    null_formula <- study_37_null_formula(claim_id)
+    full_fit <- fit_study_37_model(full_formula, data,
+                                   study_37_model_priors(claim_id, prior_values, TRUE, "cauchy(0, 2.5)"),
+                                   base_seed, cores = cores, control = control)
+    null_fit <- fit_study_37_model(null_formula, data,
+                                   study_37_model_priors(claim_id, prior_values, FALSE),
+                                   base_seed + 1L, cores = cores, control = control)
+    set.seed(base_seed)
+    bridge <- bridge_study_37_pair(list(full = full_fit, null = null_fit),
+                                   repetitions = repetitions, cores = cores)
+    central <- stats::median(bridge$log10_bf10)
+    tibble::tibble(
+      claim_id = claim_id,
+      study_id = "study_37",
+      prior_label = "gelman_cauchy_sensitivity",
+      rscale = 2.5,
+      bf10 = 10^central,
+      log_bf10 = central * log(10),
+      log10_bf10 = central,
+      bf_error = NA_real_,
+      bridge_sd_log10 = stats::sd(bridge$log10_bf10),
+      bridge_span_log10 = max(bridge$log10_bf10) - min(bridge$log10_bf10),
+      bridge_repetitions = nrow(bridge),
+      model_null = sprintf("full Bayesian GLMM without %s", focal_coef),
+      model_alt = sprintf("full Bayesian GLMM with %s (Cauchy(0, 2.5) focal prior)", focal_coef),
+      method = "full_bayesian_glmm_bridge_sampling_cauchy"
+    )
+  })
+  dir.create(dirname(output_path), recursive = TRUE, showWarnings = FALSE)
+  readr::write_csv(rows, output_path, na = "")
+  message(sprintf("Wrote %d Study 37 Cauchy(0, 2.5) sensitivity rows to %s", nrow(rows), output_path))
+  print(as.data.frame(rows[, c("claim_id", "prior_label", "bf10", "log10_bf10", "bridge_span_log10")]))
   invisible(rows)
 }

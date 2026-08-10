@@ -190,13 +190,17 @@ study_37_focal_coefficient <- function(claim_id) {
 }
 
 
-study_37_model_priors <- function(claim_id,prior_values,include_focal) {
+study_37_model_priors <- function(claim_id,prior_values,include_focal,focal_prior_override = NULL) {
 
   focal_coefficient <- study_37_focal_coefficient(claim_id)
   nuisance_prior <- sprintf("normal(0, %.15g)",as.numeric(prior_values[["nuisance_sd"]]))
   intercept_prior <- sprintf("normal(0, %.15g)",as.numeric(prior_values[["intercept_sd"]]))
   random_prior <- sprintf("normal(0, %.15g)", as.numeric(prior_values[["random_sd"]]))
-  focal_prior <- sprintf("normal(0, %.15g)",as.numeric(prior_values[["focal_sd"]]) )
+  focal_prior <- if (is.null(focal_prior_override)) {
+    sprintf("normal(0, %.15g)",as.numeric(prior_values[["focal_sd"]]))
+  } else {
+    focal_prior_override
+  }
   model_priors <- c(
     brms::set_prior(prior = nuisance_prior,class = "b"),
     brms::set_prior(prior = intercept_prior,class = "Intercept"),

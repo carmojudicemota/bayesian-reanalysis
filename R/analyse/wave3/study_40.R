@@ -164,6 +164,36 @@ study_40_cache_from_saved <- function(loading_scales = study_40_loading_scales()
 }
 
 
+study_40_predictive_comparison <- function(
+    fit7_path = "outputs/intermediate/study_40_fit7_primary.rds",
+    fit8_path = "outputs/intermediate/study_40_fit8_primary.rds",
+    output_path = "outputs/intermediate/study_40_predictive_comparison.csv") {
+  fit7 <- readRDS(fit7_path)
+  fit8 <- readRDS(fit8_path)
+  measures7 <- lavaan::fitMeasures(fit7, c("waic", "looic"))
+  measures8 <- lavaan::fitMeasures(fit8, c("waic", "looic"))
+  waic7 <- as.numeric(measures7[["waic"]])
+  waic8 <- as.numeric(measures8[["waic"]])
+  looic7 <- as.numeric(measures7[["looic"]])
+  looic8 <- as.numeric(measures8[["looic"]])
+  row <- tibble::tibble(
+    claim_id = "study_40_claim_01",
+    model_alt = "Model 7: group-specific post-intervention loadings",
+    model_null = "Model 8: loadings constrained equal across groups",
+    waic_alt = waic7,
+    waic_null = waic8,
+    waic_diff_alt_minus_null = waic7 - waic8,
+    looic_alt = looic7,
+    looic_null = looic8,
+    looic_diff_alt_minus_null = looic7 - looic8,
+    elpd_diff_alt_minus_null = -(looic7 - looic8) / 2
+  )
+  dir.create(dirname(output_path), recursive = TRUE, showWarnings = FALSE)
+  readr::write_csv(row, output_path, na = "")
+  print(as.data.frame(row))
+  invisible(row)
+}
+
 compute_study_40_bayes_factors <- function(claim, priors = NULL, cache_path = study_40_cache_path()) {
   if (!file.exists(cache_path)) {
     stop("Study 40 cache not found at ", cache_path, ". Run run_study_40_bayes_factors() first.", call. = FALSE)
