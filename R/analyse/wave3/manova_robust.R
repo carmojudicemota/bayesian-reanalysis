@@ -56,6 +56,7 @@ fit_manova_robust <- function(data, outcomes, rhs, focal_scale = 0.5, seed = 123
   priors$prior[priors$class == "Intercept" & priors$coef == ""] <- "student_t(3, 0, 2.5)"
   priors$prior[priors$class == "b" & priors$coef == ""] <- paste0("normal(0, ", focal_scale, ")")
   priors$prior[priors$class == "rescor"] <- "lkj(1)"
+  priors$prior[priors$class == "nu"] <- "constant(3)"
   brms::brm(
     formula = model,
     data = data,

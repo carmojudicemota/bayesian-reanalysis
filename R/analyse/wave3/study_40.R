@@ -168,6 +168,10 @@ study_40_predictive_comparison <- function(
     fit7_path = "outputs/intermediate/study_40_fit7_primary.rds",
     fit8_path = "outputs/intermediate/study_40_fit8_primary.rds",
     output_path = "outputs/intermediate/study_40_predictive_comparison.csv") {
+  if (!file.exists(fit7_path) || !file.exists(fit8_path)) {
+    message("Study 40 primary fits not found; running the loading sweep to produce them.")
+    run_study_40_bayes_factors()
+  }
   fit7 <- readRDS(fit7_path)
   fit8 <- readRDS(fit8_path)
   measures7 <- lavaan::fitMeasures(fit7, c("waic", "looic"))
