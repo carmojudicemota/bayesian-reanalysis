@@ -1,0 +1,6 @@
+p_band,n_claims,bayesian_h1,bayesian_inconclusive,bayesian_h0,inconclusive_percent
+p < .005,27,27,0,0,0
+.005 <= p < .01,5,3,2,0,40
+.01 <= p < .02,1,1,0,0,0
+.02 <= p < .03,4,0,4,0,100
+.03 <= p < .05,1,1,0,0,0
