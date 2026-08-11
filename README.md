@@ -84,7 +84,6 @@ More figures, by theme:
 * Near-threshold ("problematic") claims by *p*-value — [`problematic_claims_pvalues.png`](outputs/figures/problematic_claims_pvalues.png)
 * Dataset composition — [`dataset_family_counts.png`](outputs/figures/dataset_family_counts.png), [`dataset_sample_size_by_family.png`](outputs/figures/dataset_sample_size_by_family.png)
 
-Superseded versions are kept in [`outputs/figures/old/`](outputs/figures/old).
 
 ---
 
