@@ -5,9 +5,8 @@ source("R/analyse/wave2/run_study_37_full_glmm.R")
 source("R/analyse/wave2/study_55.R")
 
 message("Robustness: Study 40")
-run_study_40_bayes_factors()
-study_40_predictive_comparison()
-study_40_predictive_sweep()
+run_study_40_prior_sweep()
+study_40_pretrend_check()
 
 message("Robustness: Study 37")
 run_study_37_gelman_cauchy_sensitivity()
