@@ -129,7 +129,7 @@ fit_study_55_null <- function(data, seed = 123,
   brms::brm(
     formula = formulas$model_null,
     data = data,
-    family = stats::gaussian(),,
+    family = stats::gaussian(),
     prior = study_55_null_priors(),
     chains = chains,
     iter = 12000,
