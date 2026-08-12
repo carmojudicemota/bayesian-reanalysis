@@ -249,22 +249,6 @@
       "Author": "Robin K. S. Hankin [aut, cre] (<https://orcid.org/0000-0001-5982-0415>)",
       "Encoding": "UTF-8"
     },
-    "CompQuadForm": {
-      "Package": "CompQuadForm",
-      "Version": "1.4.4",
-      "Source": "Repository",
-      "Date": "2025-07-13",
-      "Title": "Distribution Function of Quadratic Forms in Normal Variables",
-      "Authors@R": "c(person(\"Pierre\", \"Lafaye De Micheaux\", role = c(\"aut\", \"cre\"), email = \"lafaye@unsw.edu.au\"), person(\"Pierre\", \"Duchesne\", role = c(\"aut\"), email = \"duchesne@dms.umontreal.ca\"), person(c(\"Robert\", \"B.\"), \"Davies\", role = c(\"aut\")), person(c(\"R.\", \"W.\"), \"Farebrother\", role = c(\"aut\")), person(\"J.\", \"Sheil\", role = c(\"aut\")), person(\"I.\", \"O Muircheartaigh\", role = c(\"aut\")))",
-      "Author": "Pierre Lafaye De Micheaux [aut, cre], Pierre Duchesne [aut], Robert B. Davies [aut], R. W. Farebrother [aut], J. Sheil [aut], I. O Muircheartaigh [aut]",
-      "Maintainer": "Pierre Lafaye De Micheaux <lafaye@unsw.edu.au>",
-      "Description": "Computes the distribution function of quadratic forms in normal variables using Imhof's method, Davies's algorithm, Farebrother's algorithm or Liu et al.'s algorithm.",
-      "License": "GPL (>= 2)",
-      "LazyLoad": "yes",
-      "NeedsCompilation": "yes",
-      "Repository": "CRAN",
-      "Encoding": "UTF-8"
-    },
     "DBI": {
       "Package": "DBI",
       "Version": "1.3.0",
@@ -1309,66 +1293,6 @@
       "Author": "Michael Chirico [aut, cre], Jens Oehlschlägel [aut], Leonardo Silvestri [ctb], Ofek Shilon [ctb], Christian Ullerich [ctb]",
       "Maintainer": "Michael Chirico <michaelchirico4@gmail.com>",
       "Repository": "CRAN"
-    },
-    "blavaan": {
-      "Package": "blavaan",
-      "Version": "0.5-10",
-      "Source": "Repository",
-      "Title": "Bayesian Latent Variable Analysis",
-      "Authors@R": "c(person(given = \"Edgar\", family = \"Merkle\", role = c(\"aut\", \"cre\"), email = \"merklee@missouri.edu\", comment = c(ORCID = \"0000-0001-7158-0653\")), person(given = \"Yves\", family = \"Rosseel\", role  = \"aut\", email = \"Yves.Rosseel@UGent.be\"), person(given = \"Ben\", family = \"Goodrich\", role = \"aut\", email = \"benjamin.goodrich@columbia.edu\"), person(given = \"Mauricio\", family = \"Garnier-Villarreal\", role = \"ctb\", email = \"mgv@pm.me\", comment = c(ORCID = \"0000-0002-2951-6647\", \"R/blav_compare.R\", \"R/ctr_bayes_fit.R\", \"vignettes\")), person(given = c(\"Terrence\", \"D.\"), family = \"Jorgensen\", role = \"ctb\", email = \"TJorgensen314@gmail.com\", comment = c(ORCID = \"0000-0001-5111-6773\", \"R/ctr_bayes_fit.R\", \"R/ctr_ppmc.R\", \"R/blav_predict.R\")), person(given = \"Huub\", family=\"Hoofs\", role = \"ctb\", comment = \"R/ctr_bayes_fit.R\"), person(given = \"Rens\", family=\"van de Schoot\", role = \"ctb\", comment = \"R/ctr_bayes_fit.R\"), person(given = \"Andrew\", family=\"Johnson\", role=\"ctb\", comment = \"Makevars\"), person(given = \"Matthew\", family=\"Emery\", role=\"ctb\", comment = \"loo moment_match\"), person(given = c(\"Michael\", \"S.\"), family = \"Truong\", role = \"ctb\", comment = \"options(blavaan.target)\") )",
-      "Description": "Fit a variety of Bayesian latent variable models, including confirmatory factor analysis, structural equation models, and latent growth curve models. References: Merkle & Rosseel (2018) <doi:10.18637/jss.v085.i04>; Merkle et al. (2021) <doi:10.18637/jss.v100.i06>.",
-      "License": "GPL (>= 3)",
-      "ByteCompile": "true",
-      "Depends": [
-        "R(>= 4.1.0)",
-        "methods",
-        "Rcpp(>= 0.12.15)"
-      ],
-      "Imports": [
-        "stats",
-        "utils",
-        "graphics",
-        "lavaan(>= 0.6-18)",
-        "coda",
-        "mnormt",
-        "nonnest2(>= 0.5-7)",
-        "loo(>= 2.0)",
-        "rstan(>= 2.26.0)",
-        "rstantools(>= 1.5.0)",
-        "RcppParallel (>= 5.0.1)",
-        "bayesplot",
-        "Matrix",
-        "future.apply",
-        "tmvnsim",
-        "igraph"
-      ],
-      "LinkingTo": [
-        "StanHeaders (>= 2.26.0)",
-        "rstan (>= 2.26.0)",
-        "BH (>= 1.69.0)",
-        "Rcpp (>= 0.12.15)",
-        "RcppEigen (>= 0.3.3.4.0)",
-        "RcppParallel (>= 5.0.1)"
-      ],
-      "Suggests": [
-        "runjags(>= 2.0.4-3)",
-        "modeest(>= 2.3.3)",
-        "rjags",
-        "cmdstanr",
-        "semTools",
-        "blavsam",
-        "tinytest"
-      ],
-      "SystemRequirements": "GNU make",
-      "URL": "https://ecmerkle.github.io/blavaan/, https://github.com/ecmerkle/blavaan",
-      "BugReports": "https://github.com/ecmerkle/blavaan/issues",
-      "Additional_repositories": "https://stan-dev.r-universe.dev/, https://ecmerkle.github.io/drat",
-      "Config/Needs/website": "brms",
-      "NeedsCompilation": "yes",
-      "Author": "Edgar Merkle [aut, cre] (ORCID: <https://orcid.org/0000-0001-7158-0653>), Yves Rosseel [aut], Ben Goodrich [aut], Mauricio Garnier-Villarreal [ctb] (ORCID: <https://orcid.org/0000-0002-2951-6647>, R/blav_compare.R, R/ctr_bayes_fit.R, vignettes), Terrence D. Jorgensen [ctb] (ORCID: <https://orcid.org/0000-0001-5111-6773>, R/ctr_bayes_fit.R, R/ctr_ppmc.R, R/blav_predict.R), Huub Hoofs [ctb] (R/ctr_bayes_fit.R), Rens van de Schoot [ctb] (R/ctr_bayes_fit.R), Andrew Johnson [ctb] (Makevars), Matthew Emery [ctb] (loo moment_match), Michael S. Truong [ctb] (options(blavaan.target))",
-      "Maintainer": "Edgar Merkle <merklee@missouri.edu>",
-      "Repository": "CRAN",
-      "Encoding": "UTF-8"
     },
     "blob": {
       "Package": "blob",
@@ -4050,74 +3974,6 @@
       "Maintainer": "Rich FitzJohn <rich.fitzjohn@gmail.com>",
       "Repository": "CRAN"
     },
-    "igraph": {
-      "Package": "igraph",
-      "Version": "2.3.3",
-      "Source": "Repository",
-      "Title": "Network Analysis and Visualization",
-      "Authors@R": "c( person(\"Gábor\", \"Csárdi\", , \"csardi.gabor@gmail.com\", role = \"aut\", comment = c(ORCID = \"0000-0001-7098-9676\")), person(\"Tamás\", \"Nepusz\", , \"ntamas@gmail.com\", role = \"aut\", comment = c(ORCID = \"0000-0002-1451-338X\")), person(\"Vincent\", \"Traag\", role = \"aut\", comment = c(ORCID = \"0000-0003-3170-3879\")), person(\"Szabolcs\", \"Horvát\", , \"szhorvat@gmail.com\", role = \"aut\", comment = c(ORCID = \"0000-0002-3100-523X\")), person(\"Fabio\", \"Zanini\", , \"fabio.zanini@unsw.edu.au\", role = \"aut\", comment = c(ORCID = \"0000-0001-7097-8539\")), person(\"Daniel\", \"Noom\", role = \"aut\"), person(\"Kirill\", \"Müller\", , \"kirill@cynkra.com\", role = c(\"aut\", \"cre\"), comment = c(ORCID = \"0000-0002-1416-3412\")), person(\"Michael\", \"Antonov\", role = \"ctb\"), person(\"Chan Zuckerberg Initiative\", role = \"fnd\", comment = c(ROR = \"02qenvm24\")), person(\"David\", \"Schoch\", , \"david.schoch@cynkra.com\", role = \"aut\", comment = c(ORCID = \"0000-0003-2952-4812\")), person(\"Maëlle\", \"Salmon\", , \"maelle@cynkra.com\", role = \"aut\", comment = c(ORCID = \"0000-0002-2815-0399\")), person(\"R Consortium\", role = \"fnd\", comment = c(ROR = \"01z833950\")) )",
-      "Description": "Routines for simple graphs and network analysis. It can handle large graphs very well and provides functions for generating random and regular graphs, graph visualization, centrality methods and much more.",
-      "License": "GPL (>= 2)",
-      "URL": "https://r.igraph.org/, https://igraph.org/, https://igraph.discourse.group/",
-      "BugReports": "https://github.com/igraph/rigraph/issues",
-      "Depends": [
-        "methods",
-        "R (>= 3.5.0)"
-      ],
-      "Imports": [
-        "cli",
-        "graphics",
-        "grDevices",
-        "lifecycle",
-        "magrittr",
-        "Matrix",
-        "pkgconfig (>= 2.0.0)",
-        "rlang (>= 1.1.0)",
-        "stats",
-        "utils",
-        "vctrs"
-      ],
-      "Suggests": [
-        "ape (>= 5.7-0.1)",
-        "callr",
-        "decor",
-        "digest",
-        "igraphdata",
-        "knitr",
-        "rgl (>= 1.3.14)",
-        "rmarkdown",
-        "scales",
-        "stats4",
-        "tcltk",
-        "testthat",
-        "vdiffr",
-        "withr"
-      ],
-      "Enhances": [
-        "graph"
-      ],
-      "LinkingTo": [
-        "cpp11 (>= 0.5.0)"
-      ],
-      "VignetteBuilder": "knitr",
-      "Config/build/compilation-database": "false",
-      "Config/build/never-clean": "true",
-      "Config/comment/compilation-database": "Generate manually with pkgload:::generate_db() for faster pkgload::load_all()",
-      "Config/Needs/build": "devtools, irlba, pkgconfig",
-      "Config/Needs/coverage": "covr",
-      "Config/Needs/roxygen2": "r-lib/roxygen2, igraph/igraph.r2cdocs, moodymudskipper/devtag",
-      "Config/Needs/website": "here, readr, tibble, xmlparsedata, xml2",
-      "Config/testthat/edition": "3",
-      "Config/testthat/parallel": "true",
-      "Config/testthat/start-first": "aaa-auto, vs-es, scan, vs-operators, weakref, watts.strogatz.game",
-      "Encoding": "UTF-8",
-      "RoxygenNote": "7.3.3.9000",
-      "SystemRequirements": "libxml2 (optional), glpk (>= 4.57, optional)",
-      "NeedsCompilation": "yes",
-      "Author": "Gábor Csárdi [aut] (ORCID: <https://orcid.org/0000-0001-7098-9676>), Tamás Nepusz [aut] (ORCID: <https://orcid.org/0000-0002-1451-338X>), Vincent Traag [aut] (ORCID: <https://orcid.org/0000-0003-3170-3879>), Szabolcs Horvát [aut] (ORCID: <https://orcid.org/0000-0002-3100-523X>), Fabio Zanini [aut] (ORCID: <https://orcid.org/0000-0001-7097-8539>), Daniel Noom [aut], Kirill Müller [aut, cre] (ORCID: <https://orcid.org/0000-0002-1416-3412>), Michael Antonov [ctb], Chan Zuckerberg Initiative [fnd] (ROR: <https://ror.org/02qenvm24>), David Schoch [aut] (ORCID: <https://orcid.org/0000-0003-2952-4812>), Maëlle Salmon [aut] (ORCID: <https://orcid.org/0000-0002-2815-0399>), R Consortium [fnd] (ROR: <https://ror.org/01z833950>)",
-      "Maintainer": "Kirill Müller <kirill@cynkra.com>",
-      "Repository": "CRAN"
-    },
     "inline": {
       "Package": "inline",
       "Version": "0.3.21",
@@ -5189,48 +5045,6 @@
       "NeedsCompilation": "yes",
       "Author": "Brian Ripley [aut, cre, cph], William Venables [cph]",
       "Maintainer": "Brian Ripley <Brian.Ripley@R-project.org>",
-      "Repository": "CRAN"
-    },
-    "nonnest2": {
-      "Package": "nonnest2",
-      "Version": "0.5-9",
-      "Source": "Repository",
-      "Title": "Tests of Non-Nested Models",
-      "Date": "2026-03-31",
-      "Authors@R": "c(person(given = \"Edgar\", family = \"Merkle\", role = c(\"aut\",\"cre\"), email = \"merklee@missouri.edu\"), person(given = \"Dongjun\", family = \"You\", role = \"aut\"), person(given = \"Lennart\", family = \"Schneider\", role = \"ctb\"), person(given = \"Mauricio\", family = \"Garnier-Villarreal\", role = \"ctb\"), person(given = \"Seongho\", family = \"Bae\", role = \"ctb\"), person(given = \"Phil\", family = \"Chalmers\", role = \"ctb\") )",
-      "Description": "Testing non-nested models via theory supplied by Vuong (1989) <DOI:10.2307/1912557>. Includes tests of model distinguishability and of model fit that can be applied to both nested and non-nested models. Also includes functionality to obtain confidence intervals associated with AIC and BIC. This material is partially based on work supported by the National Science Foundation under Grant Number SES-1061334.",
-      "Depends": [
-        "R (>= 3.0.0)"
-      ],
-      "Imports": [
-        "CompQuadForm",
-        "mvtnorm",
-        "lavaan (>= 0.6-6)",
-        "sandwich",
-        "methods"
-      ],
-      "License": "GPL-2 | GPL-3",
-      "Suggests": [
-        "mirt (>= 1.42)",
-        "OpenMx",
-        "tidySEM",
-        "AER",
-        "MASS",
-        "faraway",
-        "mlogit",
-        "ordinal",
-        "pscl",
-        "knitr",
-        "rmarkdown",
-        "testthat"
-      ],
-      "URL": "https://github.com/qpsy/nonnest2",
-      "VignetteBuilder": "knitr",
-      "RoxygenNote": "7.3.3",
-      "Encoding": "UTF-8",
-      "NeedsCompilation": "no",
-      "Author": "Edgar Merkle [aut, cre], Dongjun You [aut], Lennart Schneider [ctb], Mauricio Garnier-Villarreal [ctb], Seongho Bae [ctb], Phil Chalmers [ctb]",
-      "Maintainer": "Edgar Merkle <merklee@missouri.edu>",
       "Repository": "CRAN"
     },
     "numDeriv": {
@@ -7581,21 +7395,6 @@
       "Author": "Yihui Xie [aut, cre, cph] (ORCID: <https://orcid.org/0000-0003-0645-5666>), Posit Software, PBC [cph, fnd], Christophe Dervieux [ctb] (ORCID: <https://orcid.org/0000-0003-4474-2498>), Devon Ryan [ctb] (ORCID: <https://orcid.org/0000-0002-8549-0971>), Ethan Heinzen [ctb], Fernando Cagua [ctb]",
       "Maintainer": "Yihui Xie <xie@yihui.name>",
       "Repository": "CRAN"
-    },
-    "tmvnsim": {
-      "Package": "tmvnsim",
-      "Version": "1.0-2",
-      "Source": "Repository",
-      "Date": "2016-12-14",
-      "Title": "Truncated Multivariate Normal Simulation",
-      "Author": "Samsiddhi Bhattacjarjee <sb1@nibmg.ac.in>",
-      "Maintainer": "Samsiddhi Bhattacharjee <sb1@nibmg.ac.in>",
-      "Description": "Importance sampling from the truncated multivariate normal using the GHK (Geweke-Hajivassiliou-Keane) simulator. Unlike Gibbs sampling which can get stuck in one truncation sub-region depending on initial values, this package allows  truncation based on disjoint regions that are created by truncation of absolute values. The GHK algorithm uses simple Cholesky transformation followed by recursive simulation of univariate truncated normals hence there are also no convergence issues.  Importance sample is returned along with sampling weights, based on which, one can calculate integrals over truncated regions for multivariate normals.",
-      "License": "GPL-2",
-      "Repository": "CRAN",
-      "URL": "https://www.r-project.org",
-      "NeedsCompilation": "yes",
-      "Encoding": "UTF-8"
     },
     "triebeard": {
       "Package": "triebeard",
