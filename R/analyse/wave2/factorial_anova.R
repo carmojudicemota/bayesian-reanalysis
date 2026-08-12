@@ -20,6 +20,7 @@ factorial_prior_grid <- function(priors) {
       .data$param == "rscale_fixed"
     ) |>
     dplyr::mutate(
+      value = suppressWarnings(as.numeric(.data$value)),
       prior_order = match(
         .data$prior_label,
         c("narrow","primary","wide")
