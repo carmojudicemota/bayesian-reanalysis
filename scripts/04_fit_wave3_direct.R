@@ -1,3 +1,6 @@
+source("scripts/configure_runtime.R")
+configure_runtime()
+
 source("R/analyse/wave3/wave3_helpers.R")
 source("R/analyse/wave3/study_40.R")
 source("R/analyse/wave3/study_45.R")

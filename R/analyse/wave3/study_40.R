@@ -41,11 +41,13 @@ study_40_priors <- function(focal_scale = 0.5) {
 }
 
 
-fit_study_40_growth <- function(long = study_40_long(), focal_scale = 0.5, seed = 123, cores = 4) {
+fit_study_40_growth <- function(long = study_40_long(), focal_scale = 0.5, seed = 123,
+                                chains = 4,
+                                cores = min(chains, getOption("bayesian_reanalysis.cores", getOption("mc.cores", 1L)))) {
   brms::brm(
     score_z ~ occ_f + group + group:post4 + group:post5 + (1 | student),
     data = long, family = gaussian(), prior = study_40_priors(focal_scale),
-    chains = 4, cores = cores, iter = 4000, warmup = 1000, seed = seed, refresh = 0
+    chains = chains, cores = cores, iter = 4000, warmup = 1000, seed = seed, refresh = 0
   )
 }
 
@@ -140,7 +142,9 @@ study_40_long_pretrend <- function() {
 }
 
 
-study_40_pretrend_check <- function(focal_scale = 0.5, seed = 123, cores = 4) {
+study_40_pretrend_check <- function(focal_scale = 0.5, seed = 123,
+                                    chains = 4,
+                                    cores = min(chains, getOption("bayesian_reanalysis.cores", getOption("mc.cores", 1L)))) {
   long <- study_40_long_pretrend()
   pr <- c(
     brms::set_prior("normal(0, 5)", class = "b"),
@@ -150,7 +154,7 @@ study_40_pretrend_check <- function(focal_scale = 0.5, seed = 123, cores = 4) {
   fit <- brms::brm(
     score_z ~ occ_f + group + group:pre_c + group:post4 + group:post5 + (1 | student),
     data = long, family = gaussian(), prior = pr,
-    chains = 4, cores = cores, iter = 4000, warmup = 1000, seed = seed, refresh = 0
+    chains = chains, cores = cores, iter = 4000, warmup = 1000, seed = seed, refresh = 0
   )
   bf <- study_40_order_bf(fit, focal_scale = focal_scale)
   print(bf)

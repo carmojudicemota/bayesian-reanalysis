@@ -35,12 +35,14 @@ study_45_items_long <- function(path = "data/raw/study_45/Psy_Lit_Data.csv") {
 
 
 fit_study_45_ordinal <- function(long = study_45_items_long(), b_scale = 1, seed = 123,
-                                 cores = 4, adapt_delta = 0.95) {
+                                 chains = 4,
+                                 cores = min(chains, getOption("bayesian_reanalysis.cores", getOption("mc.cores", 1L))),
+                                 adapt_delta = 0.95) {
   brms::brm(
     rating ~ dimension + (1 | student) + (1 | attribute),
     data = long, family = brms::cumulative("probit"),
     prior = brms::set_prior(paste0("normal(0, ", b_scale, ")"), class = "b"),
-    chains = 4, cores = cores, iter = 4000, warmup = 1000, seed = seed, refresh = 0,
+    chains = chains, cores = cores, iter = 4000, warmup = 1000, seed = seed, refresh = 0,
     control = list(adapt_delta = adapt_delta)
   )
 }

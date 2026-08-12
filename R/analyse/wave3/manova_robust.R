@@ -49,7 +49,8 @@ manova_robust_standardize <- function(data, outcomes) {
 
 fit_manova_robust <- function(data, outcomes, rhs, focal_scale = 0.5, seed = 123,
                               family = brms::student(),
-                              chains = 4, iter = 4000, warmup = 1000, cores = 4) {
+                              chains = 4, iter = 4000, warmup = 1000,
+                              cores = min(chains, getOption("bayesian_reanalysis.cores", getOption("mc.cores", 1L)))) {
   form <- stats::as.formula(paste0("mvbind(", paste(outcomes, collapse = ", "), ") ~ ", rhs))
   model <- brms::bf(form) + brms::set_rescor(TRUE)
   priors <- brms::get_prior(model, data = data, family = family)
@@ -73,7 +74,8 @@ fit_manova_robust <- function(data, outcomes, rhs, focal_scale = 0.5, seed = 123
   )
 }
 
-bridge_manova_robust <- function(full_fit, null_fit, repetitions = 5L, cores = 1L) {
+bridge_manova_robust <- function(full_fit, null_fit, repetitions = 5L,
+                                 cores = getOption("bayesian_reanalysis.cores", getOption("mc.cores", 1L))) {
   estimates <- vapply(seq_len(repetitions), function(i) {
     full_bridge <- brms::bridge_sampler(full_fit, silent = TRUE, cores = cores)
     null_bridge <- brms::bridge_sampler(null_fit, silent = TRUE, cores = cores)

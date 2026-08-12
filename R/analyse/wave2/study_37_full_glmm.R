@@ -216,7 +216,8 @@ study_37_model_priors <- function(claim_id,prior_values,include_focal,focal_prio
   model_priors
 }
 
-bridge_study_37_pair <- function(model_pair,repetitions = 5L,cores = 1L) {
+bridge_study_37_pair <- function(model_pair,repetitions = 5L,
+                                 cores = getOption("bayesian_reanalysis.cores", getOption("mc.cores", 1L))) {
   purrr::map_dfr(seq_len(repetitions),function(repetition) {
       full_bridge <- brms::bridge_sampler(model_pair$full,silent = TRUE,cores = cores)
       null_bridge <- brms::bridge_sampler(model_pair$null,silent = TRUE,cores = cores)

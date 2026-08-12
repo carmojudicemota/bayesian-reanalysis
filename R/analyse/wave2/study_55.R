@@ -121,7 +121,9 @@ study_55_alt_priors <- function(rscale) {
   )
 }
 
-fit_study_55_null <- function(data, seed = 123) {
+fit_study_55_null <- function(data, seed = 123,
+                              chains = 4,
+                              cores = min(chains, getOption("bayesian_reanalysis.cores", getOption("mc.cores", 1L)))) {
   formulas <- study_55_formulas()
   
   brms::brm(
@@ -129,10 +131,10 @@ fit_study_55_null <- function(data, seed = 123) {
     data = data,
     family = stats::gaussian(),,
     prior = study_55_null_priors(),
-    chains = 4,
+    chains = chains,
     iter = 12000,
     warmup = 2000,
-    cores = 4,
+    cores = cores,
     seed = seed,
     control = list(adapt_delta = 0.99, max_treedepth = 15),
     save_pars = brms::save_pars(all = TRUE),
@@ -140,7 +142,9 @@ fit_study_55_null <- function(data, seed = 123) {
   )
 }
 
-fit_study_55_alt <- function(data, rscale, seed) {
+fit_study_55_alt <- function(data, rscale, seed,
+                             chains = 4,
+                             cores = min(chains, getOption("bayesian_reanalysis.cores", getOption("mc.cores", 1L)))) {
   formulas <- study_55_formulas()
   
   brms::brm(
@@ -148,10 +152,10 @@ fit_study_55_alt <- function(data, rscale, seed) {
     data = data,
     family = stats::gaussian(),,
     prior = study_55_alt_priors(rscale),
-    chains = 4,
+    chains = chains,
     iter = 12000,
     warmup = 2000,
-    cores = 4,
+    cores = cores,
     seed = seed,
     control = list(adapt_delta = 0.99, max_treedepth = 15),
     save_pars = brms::save_pars(all = TRUE),
@@ -181,7 +185,7 @@ bridge_study_55_pair <- function(
     null_fit,
     alt_fit,
     repetitions = 5,
-    cores = 4) {
+    cores = getOption("bayesian_reanalysis.cores", getOption("mc.cores", 1L))) {
   
   estimates <- purrr::map_dfr(seq_len(repetitions), function(i) {
     null_bridge <- bridgesampling::bridge_sampler(null_fit, silent = TRUE, cores = cores)

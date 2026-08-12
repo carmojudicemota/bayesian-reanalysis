@@ -10,7 +10,8 @@ study_37_prior_grid <- function() {
 }
 
 fit_study_37_model <- function(formula, data, priors, seed,
-                               iter = 6000, warmup = 2000, chains = 4, cores = 4,
+                               iter = 6000, warmup = 2000, chains = 4,
+                               cores = min(chains, getOption("bayesian_reanalysis.cores", getOption("mc.cores", 1L))),
                                control = list(adapt_delta = 0.8, max_treedepth = 10)) {
   brms::brm(
     formula = formula,
@@ -29,7 +30,9 @@ fit_study_37_model <- function(formula, data, priors, seed,
 }
 
 run_study_37_full_glmm <- function(output_path = "outputs/tables/study_37_full_glmm_bayes_factors.csv",
-                                   repetitions = 5L, cores = 4L, base_seed = 123L) {
+                                   repetitions = 5L,
+                                   cores = getOption("bayesian_reanalysis.cores", getOption("mc.cores", 1L)),
+                                   base_seed = 123L) {
   data <- load_study_37_full_glmm_data()
   claims <- c("study_37_claim_01", "study_37_claim_02")
   grid <- study_37_prior_grid()
@@ -80,7 +83,9 @@ run_study_37_full_glmm <- function(output_path = "outputs/tables/study_37_full_g
 run_study_37_gelman_cauchy_sensitivity <- function(
     output_path = "outputs/intermediate/study_37_gelman_cauchy_sensitivity.csv",
     claims = c("study_37_claim_01", "study_37_claim_02"),
-    repetitions = 5L, cores = 4L, base_seed = 321L,
+    repetitions = 5L,
+    cores = getOption("bayesian_reanalysis.cores", getOption("mc.cores", 1L)),
+    base_seed = 321L,
     control = list(adapt_delta = 0.99, max_treedepth = 12)) {
   data <- load_study_37_full_glmm_data()
   prior_values <- study_37_prior_values(0.6)

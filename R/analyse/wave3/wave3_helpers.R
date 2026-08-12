@@ -40,7 +40,7 @@ wave3_row <- function(
     method,
     prior_label = "primary",
     bf_error = NA_real_) {
-
+  
   bf10 <- as.numeric(bf10)
   restricted <- grepl("[<>]", model_alt)
   bf_sidedness <- if (restricted) "one_sided" else "two_sided"
@@ -51,7 +51,7 @@ wave3_row <- function(
   } else {
     NA_character_
   }
-
+  
   tibble::tibble(
     claim_id = claim$claim_id,
     study_id = claim$study_id,
@@ -206,4 +206,26 @@ wave3_multivariate_normality_table <- function(out_csv = "outputs/diagnostics/wa
   dir.create(dirname(out_csv), recursive = TRUE, showWarnings = FALSE)
   readr::write_csv(rows, out_csv)
   invisible(rows)
+}
+
+wave3_brms_diagnostics <- function(fit) {
+  draws_summary <- posterior::summarise_draws(
+    brms::as_draws(fit),
+    posterior::rhat,
+    posterior::ess_bulk,
+    posterior::ess_tail
+  )
+  
+  nuts <- brms::nuts_params(fit)
+  divergences <- sum(
+    nuts$Parameter == "divergent__" & nuts$Value == 1,
+    na.rm = TRUE
+  )
+  
+  list(
+    rhat_max = max(draws_summary$rhat, na.rm = TRUE),
+    ess_bulk_min = min(draws_summary$ess_bulk, na.rm = TRUE),
+    ess_tail_min = min(draws_summary$ess_tail, na.rm = TRUE),
+    divergences = divergences
+  )
 }
