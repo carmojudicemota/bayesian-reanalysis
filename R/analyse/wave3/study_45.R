@@ -70,12 +70,37 @@ study_45_order_bf <- function(fit, b_scale = 1, n_prior = 2e5, seed = 1) {
 }
 
 
-compute_study_45_bayes_factors <- function(claim, priors = NULL, b_scale = 1, seed = 123) {
+study_45_cache_path <- function() {
+  "outputs/intermediate/study_45_bayes_factors.csv"
+}
+
+
+run_study_45_ordinal_fit <- function(b_scale = 1, seed = 123, cache_path = study_45_cache_path()) {
   fit <- fit_study_45_ordinal(b_scale = b_scale, seed = seed)
   bf <- study_45_order_bf(fit, b_scale = b_scale)
+  row <- data.frame(
+    claim_id = "study_45_claim_01", prior_label = "primary",
+    bf10 = bf$bf_vs_complement, post_prop = bf$post_prop,
+    prior_prop = bf$prior_prop, rhat_max = bf$rhat_max
+  )
+  dir.create(dirname(cache_path), recursive = TRUE, showWarnings = FALSE)
+  utils::write.csv(row, cache_path, row.names = FALSE)
+  message(sprintf("Wrote Study 45 ordinal BF to %s (bf10 = %.4g)", cache_path, bf$bf_vs_complement))
+  invisible(row)
+}
+
+
+compute_study_45_bayes_factors <- function(claim, cache_path = study_45_cache_path()) {
+  if (!file.exists(cache_path)) run_study_45_ordinal_fit(cache_path = cache_path)
+  cached <- utils::read.csv(cache_path, stringsAsFactors = FALSE)
+  rows <- cached[cached$claim_id == claim$claim_id, , drop = FALSE]
+  if (nrow(rows) < 1) {
+    stop("No cached Study 45 result for ", claim$claim_id, ". Run run_study_45_ordinal_fit() first.",
+         call. = FALSE)
+  }
   wave3_row(
     claim = claim,
-    bf10 = bf$bf_vs_complement,
+    bf10 = rows$bf10[1],
     model_null = "no career-highest / development-lowest ordering across dimensions",
     model_alt = "Import > all others & Dev < all others (career importance highest, development lowest)",
     bf_family = "ordinal_order_restricted",

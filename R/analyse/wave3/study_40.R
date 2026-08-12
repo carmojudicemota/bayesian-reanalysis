@@ -72,21 +72,37 @@ study_40_order_bf <- function(fit, focal_scale = 0.5, n_prior = 2e5, seed = 1) {
 }
 
 
-compute_study_40_bayes_factors <- function(claim, priors = NULL, focal_scale = 0.5, seed = 123) {
+study_40_cache_path <- function() {
+  "outputs/intermediate/study_40_bayes_factors.csv"
+}
+
+
+run_study_40_direct <- function(focal_scale = 0.5, seed = 123, cache_path = study_40_cache_path()) {
   fit <- fit_study_40_growth(focal_scale = focal_scale, seed = seed)
   bf <- study_40_order_bf(fit, focal_scale = focal_scale)
-  dir.create("outputs/intermediate", recursive = TRUE, showWarnings = FALSE)
-  utils::write.csv(
-    data.frame(
-      claim_id = "study_40_claim_01", bf10 = bf$bf_vs_complement,
-      delta4 = bf$delta4, delta5 = bf$delta5,
-      rhat_max_m7 = bf$rhat_max, rhat_max_m8 = bf$rhat_max
-    ),
-    "outputs/intermediate/study_40_bayes_factors.csv", row.names = FALSE
+  row <- data.frame(
+    claim_id = "study_40_claim_01", prior_label = "primary",
+    bf10 = bf$bf_vs_complement, delta4 = bf$delta4, delta5 = bf$delta5,
+    post_prop = bf$post_prop, rhat_max_m7 = bf$rhat_max, rhat_max_m8 = bf$rhat_max
   )
+  dir.create(dirname(cache_path), recursive = TRUE, showWarnings = FALSE)
+  utils::write.csv(row, cache_path, row.names = FALSE)
+  message(sprintf("Wrote Study 40 direct BF to %s (bf10 = %.4g)", cache_path, bf$bf_vs_complement))
+  invisible(row)
+}
+
+
+compute_study_40_bayes_factors <- function(claim, cache_path = study_40_cache_path()) {
+  if (!file.exists(cache_path)) run_study_40_direct(cache_path = cache_path)
+  cached <- utils::read.csv(cache_path, stringsAsFactors = FALSE)
+  rows <- cached[cached$claim_id == claim$claim_id, , drop = FALSE]
+  if (nrow(rows) < 1) {
+    stop("No cached Study 40 result for ", claim$claim_id, ". Run run_study_40_direct() first.",
+         call. = FALSE)
+  }
   wave3_row(
     claim = claim,
-    bf10 = bf$bf_vs_complement,
+    bf10 = rows$bf10[1],
     model_null = "no additional post-intervention gain for opt-in (delta4 <= 0 or delta5 <= 0)",
     model_alt = "opt-in gains post-intervention (delta4 > 0 & delta5 > 0)",
     bf_family = "growth_order_restricted",
