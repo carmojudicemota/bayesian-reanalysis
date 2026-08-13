@@ -1,7 +1,5 @@
 library(readr)
 library(dplyr)
-library(ggplot2)
-library(forcats)
 
 p_band_levels <- c("p >= .05", ".01 <= p < .05", ".001 <= p < .01", "p < .001")
 
@@ -162,30 +160,6 @@ build_concordance_summary <- function(claim_level) {
     arrange(concordance_cell)
 }
 
-plot_evidence_plane <- function(claim_level, alpha, k, output_path) {
-  p_threshold <- -log10(alpha)
-  bf_threshold <- log10(k)
-  
-  plot <- ggplot(claim_level, aes(x = negative_log10_p, y = log10_bf10, colour = concordance_cell)) +
-    geom_hline(yintercept = c(-bf_threshold, bf_threshold), linetype = "dashed") +
-    geom_vline(xintercept = p_threshold, linetype = "dashed") +
-    geom_hline(yintercept = 0, linewidth = 0.3) +
-    geom_point(size = 2.7, alpha = 0.85) +
-    labs(
-      x = expression(-log[10](p)), y = expression(log[10](BF[10])), colour = "Concordance cell",
-      title = "Frequentist-Bayesian evidence plane",
-      subtitle = paste0(
-        "Primary prior; alpha = ", alpha, "; H1 threshold BF10 >= ", k,
-        "; H0 threshold BF10 <= ", round(1 / k, 3)
-      )
-    ) +
-    theme_minimal(base_size = 12)
-  
-  dir.create(dirname(output_path), recursive = TRUE, showWarnings = FALSE)
-  ggsave(filename = output_path, plot = plot, width = 8, height = 5.5, dpi = 300)
-  invisible(plot)
-}
-
 build_detailed_rank_table <- function(claim_level) {
   claim_level |>
     select(
@@ -196,108 +170,12 @@ build_detailed_rank_table <- function(claim_level) {
     arrange(desc(log10_bf10))
 }
 
-plot_detailed_rank <- function(detailed_rank, output_path) {
-  tr <- function(x) asinh(x)
-  brks <- c(-5, -2, -1, 0, 1, 2, 5, 10, 30, 90, 220)
-  df <- detailed_rank |> mutate(claim_id = fct_reorder(claim_id, log10_bf10))
-
-  p <- ggplot(df, aes(x = tr(log10_bf10), y = claim_id)) +
-    geom_vline(xintercept = tr(log10(c(1 / 3, 3))), linetype = "dashed", colour = "grey55", linewidth = 0.3) +
-    geom_vline(xintercept = 0, colour = "black", linewidth = 0.4) +
-    geom_point(aes(colour = concordance_status), size = 3) +
-    geom_text(aes(label = p_band), hjust = -0.15, size = 2.6, colour = "grey30") +
-    scale_x_continuous(breaks = tr(brks), labels = brks) +
-    scale_colour_manual(values = c("Concordant" = "#2b8a3e", "Inconclusive" = "#868e96", "Discordant" = "#e03131")) +
-    labs(
-      x = expression(log[10](BF[10]) ~ "(asinh scale; primary prior)"), y = NULL, colour = "Concordance status",
-      title = "Detailed evidence rank",
-      subtitle = paste0(
-        "Ranked by Bayes-factor strength (Jeffreys 1961 categories); asinh axis keeps extreme and ",
-        "near-threshold claims legible; label shows the p-value band; colour shows six-cell status"
-      )
-    ) +
-    theme_minimal(base_size = 11) +
-    theme(panel.grid = element_blank())
-
-  dir.create(dirname(output_path), recursive = TRUE, showWarnings = FALSE)
-  ggsave(filename = output_path, plot = p, width = 9, height = max(4, 0.35 * nrow(df) + 1.5), dpi = 300)
-  invisible(p)
-}
-
-plot_detailed_rank_zoom <- function(detailed_rank, output_path, lim = 0.8) {
-  df <- detailed_rank |>
-    filter(is.finite(log10_bf10), abs(log10_bf10) <= lim) |>
-    mutate(claim_id = fct_reorder(claim_id, log10_bf10))
-
-  p <- ggplot(df, aes(x = log10_bf10, y = claim_id)) +
-    annotate("rect", xmin = log10(1 / 3), xmax = log10(3), ymin = -Inf, ymax = Inf, fill = "#9E9E9E", alpha = 0.12) +
-    geom_vline(xintercept = c(log10(1 / 3), log10(3)), linetype = "dashed", linewidth = 0.35) +
-    geom_vline(xintercept = 0, colour = "black", linewidth = 0.4) +
-    geom_point(aes(colour = concordance_status), size = 3) +
-    geom_text(aes(label = p_band), hjust = -0.2, size = 2.6, colour = "grey30") +
-    scale_colour_manual(values = c("Concordant" = "#2b8a3e", "Inconclusive" = "#868e96", "Discordant" = "#e03131")) +
-    coord_cartesian(xlim = c(-lim - 0.15, lim + 0.15)) +
-    labs(
-      x = expression(log[10](BF[10]) ~ "(primary prior)"), y = NULL, colour = "Concordance status",
-      title = "Detailed evidence rank — problematic zone",
-      subtitle = paste0("Only claims with |log10 BF10| <= ", lim, ", where the six-cell decision is actually in play")
-    ) +
-    theme_minimal(base_size = 11) +
-    theme(panel.grid = element_blank())
-
-  dir.create(dirname(output_path), recursive = TRUE, showWarnings = FALSE)
-  ggsave(filename = output_path, plot = p, width = 8, height = max(3, 0.42 * nrow(df) + 1.2), dpi = 300)
-  invisible(p)
-}
-
-plot_problematic_pvalues <- function(detailed_rank, output_path, alpha = 0.05) {
-  tr <- function(x) asinh(x)
-  brks <- c(-2, -1, 0, 1, 2, 5, 10, 30, 90)
-  fmt_p <- function(x) ifelse(x < 0.001, formatC(x, format = "e", digits = 1), formatC(x, format = "f", digits = 3))
-  df <- detailed_rank |>
-    filter(concordance_status %in% c("Inconclusive", "Discordant")) |>
-    mutate(
-      claim_id = fct_reorder(claim_id, log10_bf10),
-      p_label = paste0("p = ", fmt_p(p_value), ifelse(p_value < alpha, " *", ""))
-    )
-
-  xr <- range(tr(df$log10_bf10))
-  keep <- tr(brks) >= xr[1] - 0.3 & tr(brks) <= xr[2] + 0.3
-
-  p <- ggplot(df, aes(x = tr(log10_bf10), y = claim_id)) +
-    annotate("rect", xmin = tr(log10(1 / 3)), xmax = tr(log10(3)), ymin = -Inf, ymax = Inf, fill = "#9E9E9E", alpha = 0.12) +
-    geom_vline(xintercept = tr(log10(c(1 / 3, 3))), linetype = "dashed", colour = "grey55", linewidth = 0.3) +
-    geom_vline(xintercept = 0, colour = "black", linewidth = 0.4) +
-    geom_point(aes(colour = concordance_status), size = 3) +
-    geom_text(aes(label = p_label), hjust = -0.15, size = 2.7, colour = "grey25") +
-    scale_x_continuous(breaks = tr(brks)[keep], labels = brks[keep], expand = expansion(mult = c(0.05, 0.2))) +
-    scale_colour_manual(values = c("Inconclusive" = "#868e96", "Discordant" = "#e03131")) +
-    labs(
-      x = expression(log[10](BF[10]) ~ "(asinh scale; primary prior)"), y = NULL, colour = "Concordance status",
-      title = "Problematic claims: evidence and p-values",
-      subtitle = paste0(
-        "Only inconclusive and discordant claims; grey band = Bayesian inconclusive region; ",
-        "label shows the frequentist p-value (* = significant at alpha = ", alpha, ")"
-      )
-    ) +
-    theme_minimal(base_size = 11) +
-    theme(panel.grid = element_blank())
-
-  dir.create(dirname(output_path), recursive = TRUE, showWarnings = FALSE)
-  ggsave(filename = output_path, plot = p, width = 9, height = max(3, 0.4 * nrow(df) + 1.5), dpi = 300)
-  invisible(p)
-}
-
 build_concordance_outputs <- function(
     results_path = "outputs/tables/bayes_factor_results.csv",
     alpha = .05,
     k = 3,
     claim_output_path = "outputs/tables/concordance_claim_level.csv",
     summary_output_path = "outputs/tables/concordance_summary.csv",
-    figure_output_path = "outputs/figures/evidence_concordance_plane.png",
-    detailed_rank_figure_path = "outputs/figures/detailed_evidence_rank.png",
-    detailed_rank_zoom_figure_path = "outputs/figures/detailed_evidence_rank_zoom.png",
-    problematic_pvalues_figure_path = "outputs/figures/problematic_claims_pvalues.png",
     remove_legacy_outputs = TRUE
 ) {
   if (remove_legacy_outputs) {
@@ -332,9 +210,6 @@ build_concordance_outputs <- function(
   write_csv(claim_level, claim_output_path, na = "")
   write_csv(concordance_summary, summary_output_path, na = "")
   
-  plot_detailed_rank(detailed_rank = detailed_rank, output_path = detailed_rank_figure_path)
-  plot_detailed_rank_zoom(detailed_rank = detailed_rank, output_path = detailed_rank_zoom_figure_path)
-  plot_problematic_pvalues(detailed_rank = detailed_rank, output_path = problematic_pvalues_figure_path, alpha = alpha)
   
   message(
     "Created concordance outputs for ", nrow(claim_level), " claims from ",

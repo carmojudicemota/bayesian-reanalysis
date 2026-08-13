@@ -30,6 +30,119 @@ plot_concordace_squares <- function(
                                plot.title = element_text(hjust = 0.5))
   save_fig(p,out_path,w = 8, h = 4.5)
 }
+
+plot_evidence_plane <- function(claim_level, alpha, k, output_path) {
+  p_threshold <- -log10(alpha)
+  bf_threshold <- log10(k)
+  
+  plot <- ggplot(claim_level, aes(x = negative_log10_p, y = log10_bf10, colour = concordance_cell)) +
+    geom_hline(yintercept = c(-bf_threshold, bf_threshold), linetype = "dashed") +
+    geom_vline(xintercept = p_threshold, linetype = "dashed") +
+    geom_hline(yintercept = 0, linewidth = 0.3) +
+    geom_point(size = 2.7, alpha = 0.85) +
+    labs(
+      x = expression(-log[10](p)), y = expression(log[10](BF[10])), colour = "Concordance cell",
+      title = "Frequentist-Bayesian evidence plane",
+      subtitle = paste0(
+        "Primary prior; alpha = ", alpha, "; H1 threshold BF10 >= ", k,
+        "; H0 threshold BF10 <= ", round(1 / k, 3)
+      )
+    ) +
+    theme_minimal(base_size = 12)
+  
+  dir.create(dirname(output_path), recursive = TRUE, showWarnings = FALSE)
+  ggsave(filename = output_path, plot = plot, width = 8, height = 5.5, dpi = 300)
+  invisible(plot)
+}
+
+plot_detailed_rank <- function(detailed_rank, output_path) {
+  tr <- function(x) asinh(x)
+  brks <- c(-5, -2, -1, 0, 1, 2, 5, 10, 30, 90, 220)
+  df <- detailed_rank |> mutate(claim_id = forcats::fct_reorder(claim_id, log10_bf10))
+  
+  p <- ggplot(df, aes(x = tr(log10_bf10), y = claim_id)) +
+    geom_vline(xintercept = tr(log10(c(1 / 3, 3))), linetype = "dashed", colour = "grey55", linewidth = 0.3) +
+    geom_vline(xintercept = 0, colour = "black", linewidth = 0.4) +
+    geom_point(aes(colour = concordance_status), size = 3) +
+    geom_text(aes(label = p_band), hjust = -0.15, size = 2.6, colour = "grey30") +
+    scale_x_continuous(breaks = tr(brks), labels = brks) +
+    scale_colour_manual(values = c("Concordant" = "#2b8a3e", "Inconclusive" = "#868e96", "Discordant" = "#e03131")) +
+    labs(
+      x = expression(log[10](BF[10]) ~ "(asinh scale; primary prior)"), y = NULL, colour = "Concordance status",
+      title = "Detailed evidence rank",
+      subtitle = paste0(
+        "Ranked by Bayes-factor strength (Jeffreys 1961 categories); asinh axis keeps extreme and ",
+        "near-threshold claims legible; label shows the p-value band; colour shows six-cell status"
+      )
+    ) +
+    theme_minimal(base_size = 11) +
+    theme(panel.grid = element_blank())
+  
+  dir.create(dirname(output_path), recursive = TRUE, showWarnings = FALSE)
+  ggsave(filename = output_path, plot = p, width = 9, height = max(4, 0.35 * nrow(df) + 1.5), dpi = 300)
+  invisible(p)
+}
+
+plot_detailed_rank_zoom <- function(detailed_rank, output_path, lim = 0.8) {
+  df <- detailed_rank |>
+    filter(is.finite(log10_bf10), abs(log10_bf10) <= lim) |>
+    mutate(claim_id = forcats::fct_reorder(claim_id, log10_bf10))
+  
+  p <- ggplot(df, aes(x = log10_bf10, y = claim_id)) +
+    annotate("rect", xmin = log10(1 / 3), xmax = log10(3), ymin = -Inf, ymax = Inf, fill = "#9E9E9E", alpha = 0.12) +
+    geom_vline(xintercept = c(log10(1 / 3), log10(3)), linetype = "dashed", linewidth = 0.35) +
+    geom_vline(xintercept = 0, colour = "black", linewidth = 0.4) +
+    geom_point(aes(colour = concordance_status), size = 3) +
+    geom_text(aes(label = p_band), hjust = -0.2, size = 2.6, colour = "grey30") +
+    scale_colour_manual(values = c("Concordant" = "#2b8a3e", "Inconclusive" = "#868e96", "Discordant" = "#e03131")) +
+    coord_cartesian(xlim = c(-lim - 0.15, lim + 0.15)) +
+    labs(
+      x = expression(log[10](BF[10]) ~ "(primary prior)"), y = NULL, colour = "Concordance status",
+      title = "Detailed evidence rank — problematic zone",
+      subtitle = paste0("Only claims with |log10 BF10| <= ", lim, ", where the six-cell decision is actually in play")
+    ) +
+    theme_minimal(base_size = 11) +
+    theme(panel.grid = element_blank())
+  
+  dir.create(dirname(output_path), recursive = TRUE, showWarnings = FALSE)
+  ggsave(filename = output_path, plot = p, width = 8, height = max(3, 0.42 * nrow(df) + 1.2), dpi = 300)
+  invisible(p)
+}
+
+plot_problematic_pvalues <- function(detailed_rank, output_path, alpha = 0.05) {
+  tr <- function(x) asinh(x)
+  brks <- c(-2, -1, 0, 1, 2, 5, 10, 30, 90)
+  fmt_p <- function(x) ifelse(x < 0.001, formatC(x, format = "e", digits = 1), formatC(x, format = "f", digits = 3))
+  df <- detailed_rank |>
+    filter(concordance_status %in% c("Inconclusive", "Discordant")) |>
+    mutate(
+      claim_id = forcats::fct_reorder(claim_id, log10_bf10),
+      p_label = paste0("p = ", fmt_p(p_value), ifelse(p_value < alpha, " *", ""))
+    )
+  
+  xr <- range(tr(df$log10_bf10))
+  keep <- tr(brks) >= xr[1] - 0.3 & tr(brks) <= xr[2] + 0.3
+  
+  p <- ggplot(df, aes(x = tr(log10_bf10), y = claim_id)) +
+    annotate("rect", xmin = tr(log10(1 / 3)), xmax = tr(log10(3)), ymin = -Inf, ymax = Inf, fill = "#9E9E9E", alpha = 0.12) +
+    geom_vline(xintercept = tr(log10(c(1 / 3, 3))), linetype = "dashed", colour = "grey55", linewidth = 0.3) +
+    geom_vline(xintercept = 0, colour = "black", linewidth = 0.4) +
+    geom_point(aes(colour = concordance_status), size = 3, show.legend = FALSE) +
+    geom_text(aes(label = p_label), hjust = -0.15, size = 2.7, colour = "grey25") +
+    scale_x_continuous(breaks = tr(brks)[keep], labels = brks[keep], expand = expansion(mult = c(0.05, 0.2))) +
+    scale_colour_manual(values = c("Inconclusive" = "#868e96", "Discordant" = "#e03131"), guide = "none") +
+    labs(
+      x = expression(log[10](BF[10]) ~ "(asinh scale; primary prior)"), y = NULL,
+      title = "Problematic claims: evidence and p-values"
+    ) +
+    theme_minimal(base_size = 11) +
+    theme(panel.grid = element_blank(), legend.position = "none")
+  
+  dir.create(dirname(output_path), recursive = TRUE, showWarnings = FALSE)
+  ggsave(filename = output_path, plot = p, width = 9, height = max(3, 0.4 * nrow(df) + 1.5), dpi = 300)
+  invisible(p)
+}
+
 plot_evidence_plan <- function(
     in_path = "outputs/tables/concordance_claim_level.csv",
     out_path = "outputs/figures/evidence_plan.png",
@@ -176,6 +289,30 @@ bf <- bf |>
 
 dir.create("outputs/figures", recursive = TRUE, showWarnings = FALSE)
 
+concordance_squares <- plot_concordace_squares()
+
+detailed_rank <- cl |>
+  select(
+    claim_id, study_id, stat_test, p_value, p_band, frequentist_result, bf10, bf_strength,
+    favoured_side, concordance_cell, concordance_status, negative_log10_p, log10_bf10,
+    prior_sensitivity_span
+  ) |>
+  arrange(desc(log10_bf10))
+
+plot_detailed_rank(
+  detailed_rank = detailed_rank,
+  output_path = "outputs/figures/detailed_evidence_rank.png"
+)
+plot_detailed_rank_zoom(
+  detailed_rank = detailed_rank,
+  output_path = "outputs/figures/detailed_evidence_rank_zoom.png"
+)
+plot_problematic_pvalues(
+  detailed_rank = detailed_rank,
+  output_path = "outputs/figures/problematic_claims_pvalues.png",
+  alpha = 0.05
+)
+
 zoom_lim <- 1.5
 cat_of <- function(x) ifelse(x > thr_b, "H1", ifelse(x < -thr_b, "H0", "Inconclusive"))
 tr_asinh <- function(x) asinh(x)
@@ -202,7 +339,6 @@ jeff_sec_axis <- function() ggplot2::sec_axis(~ ., breaks = tr_asinh(jeff_log10)
 
 draw_dumbbell <- function(df, xlim, title, subtitle) {
   df <- df |> dplyr::mutate(row = rank(primary, ties.method = "first"))
-  flag <- df |> dplyr::filter(claim_id == "study_40_claim_01")
   keep <- jeff_log10 >= xlim[1] & jeff_log10 <= xlim[2]
   vl <- jeff_lines[jeff_lines >= xlim[1] & jeff_lines <= xlim[2]]
   ggplot(df) +
@@ -214,9 +350,6 @@ draw_dumbbell <- function(df, xlim, title, subtitle) {
     geom_point(aes(nar, row), colour = prior_cols[["narrow"]],  size = 2.1, na.rm = TRUE) +
     geom_point(aes(pri, row), colour = prior_cols[["primary"]], size = 3.0, na.rm = TRUE) +
     geom_point(aes(wid, row), colour = prior_cols[["wide"]],    size = 2.1, na.rm = TRUE) +
-    geom_segment(data = flag, aes(x = lo, xend = hi, y = row, yend = row), colour = "grey20", linewidth = 0.6, linetype = "22", inherit.aes = FALSE) +
-    geom_point(data = flag, aes(pri, row), shape = 21, size = 3.8, stroke = 1.1, colour = "grey15", fill = NA, inherit.aes = FALSE) +
-    geom_text(data = flag, aes(pri, row + 0.45, label = "BF prior-fragile; WAIC/LOO reported separately"), size = 2.3, colour = "grey15", fontface = "italic", inherit.aes = FALSE) +
     scale_fill_manual(values = band_fill, name = "Jeffreys grade") +
     scale_colour_manual(values = c(changes = "#D55E00", stable = "#4477AA"), name = NULL,
                         labels = c(changes = "Category changes", stable = "Category stable")) +
@@ -442,8 +575,8 @@ full_df <- prior_wide |>
                    wid = pmax(pmin(wide, 6), -6))
 
 prior_robustness <- draw_dumbbell(full_df, c(-6.4, 6.4),
-  "Prior Robustness (all claims)",
-  "Axis capped at ±6")
+                                  "Prior Robustness (all claims)",
+                                  "Axis capped at ±6")
 ggsave("outputs/figures/prior_robustness.png", prior_robustness,
        width = 10, height = 4 + 0.22 * nrow(full_df), dpi = 300, limitsize = FALSE)
 
@@ -454,8 +587,8 @@ zoom_df <- prior_wide |>
 zoom_xlim <- range(c(zoom_df$lo, zoom_df$hi), na.rm = TRUE) + c(-0.1, 0.1)
 
 prior_robustness_zoom <- draw_dumbbell(zoom_df, zoom_xlim,
-  "Prior Robustness",
-  "Augmented Version")
+                                       "Prior Robustness",
+                                       "Augmented Version")
 ggsave("outputs/figures/prior_robustness_zoom.png", prior_robustness_zoom,
        width = 10, height = 4 + 0.30 * nrow(zoom_df), dpi = 300, limitsize = FALSE)
 
@@ -613,7 +746,7 @@ plot_bf_within_frequentist <- function(in_path = "outputs/tables/concordance_cla
   d <- readr::read_csv(in_path, show_col_types = FALSE) |>
     dplyr::transmute(panel = dplyr::if_else(frequentist_result == "Significant",
                                             "Significant","Non-significant"),
-      verdict = factor(as.character(bf_conclusion),levels = c("H1", "Inconclusive", "H0"))
+                     verdict = factor(as.character(bf_conclusion),levels = c("H1", "Inconclusive", "H0"))
     ) |>
     dplyr::mutate(panel = factor(panel,levels = c("Significant", "Non-significant"))
     ) |>
@@ -708,6 +841,7 @@ plot_bayes_result_proportions()
 invisible(list(
   evidence_plane = evidence_plane,
   concordance = concordance_plot,
+  concordance_squares = concordance_squares,
   evidence_spectrum = evidence_spectrum,
   evidence_spectrum_zoom = evidence_spectrum_zoom,
   prior_robustness = prior_robustness,
@@ -729,13 +863,13 @@ archive_superseded_figures <- function(dir = "outputs/figures", old = "outputs/f
 }
 
 canonical_figures <- c(
-  "evidence_plane.png", "concordance.png",
+  "evidence_plane.png", "concordance.png", "concordance_squares.png",
   "evidence_spectrum.png", "evidence_spectrum_zoom.png",
   "prior_robustness.png", "prior_robustness_zoom.png",
   "prior_slope_graph.png", "prior_slope_graph_zoom.png",
   "diverging_jeffreys_grades_by_family.png",
   "diverging_jeffreys_grades_by_family_plain.png",
-  "detailed_evidence_rank_zoom.png", "problematic_claims_pvalues.png",
+  "detailed_evidence_rank.png", "detailed_evidence_rank_zoom.png", "problematic_claims_pvalues.png",
   "bf_within_frequentist.png", "bayes_result_proportions.png",
   "stability_forest.png",
   "dataset_family_counts.png", "dataset_status_by_family.png",
