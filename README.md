@@ -1,6 +1,10 @@
 # Bayesian Reanalysis of Computationally Reproducible Studies in Psychology
 
-This repository contains a reproducible Bayesian reanalysis of frequentist results from studies in the psychology of teaching and education. It starts from results that have already been computationally reproduced, and asks a separate question: does the *evidential verdict* survive a Bayesian re-evaluation?
+This repository contains a reproducible Bayesian reanalysis of frequentist results 
+from studies in the psychology of teaching and education. 
+It starts from results that have already been computationally reproduced, 
+and asks a separate question: does the *evidential verdict* survive a 
+Bayesian re-evaluation?
 
 The project separates:
 
@@ -11,7 +15,17 @@ The project separates:
 5. prior-sensitivity and numerical-stability auditing;
 6. tables, figures, and reporting outputs.
 
-The repository is organised so that every claim marked `ready` can be reproduced from the prepared study data committed under `data/raw/`, the locked R environment, and a single run-all script.
+The repository is organised so that every claim marked `ready` can be reproduced 
+from the prepared study data committed under `data/raw/`, the 
+locked R environment, and a single run-all script.
+
+
+
+>This project was developed during the summer of 2026 in the Bristol Summer Research
+>Internship in STEM programme, under the supervision and advisement of Dr Peter Allen
+>and Dr Robbie Clark. 
+
+
 
 ---
 
