@@ -18,7 +18,10 @@ stability_source_of <- function(method) {
     is.na(method) ~ NA_character_,
     grepl("BFpack|bain", method) ~ "analytic",
     grepl("bridge", method) ~ "bridge_sampling",
-    grepl("RoBTT|blavaan", method) ~ "mcmc_convergence",
+    grepl(
+      "RoBTT|blavaan|brms_growth_curve_order_restricted_bf|brms_ordinal_order_restricted_bf",
+      method
+    ) ~ "mcmc_convergence",
     grepl("gibbs", method) ~ "reseed_gibbs",
     grepl("bayesfactor|factorial|simple_effect", method) ~ "montecarlo_bayesfactor",
     TRUE ~ NA_character_
@@ -104,15 +107,7 @@ reseed_study_39 <- function(seeds = 1:20, mixing_seeds = 101:104,
   })
 }
 
-reseed_study_45 <- function(seeds = 1:8, n_samples = 4000, n_burnin = 1000) {
-  if (!exists("study_45_gibbs")) return(tibble::tibble())
-  m <- load_study_45_data()
-  samples <- stability_reseed_samples("study_45_claim_01", function() {
-    draws <- study_45_gibbs(m, n_samples, n_burnin)
-    study_45_afbf(draws, nrow(m))
-  }, seeds)
-  dplyr::mutate(samples, study_id = "study_45", mcmc_rhat = NA_real_)
-}
+
 
 summarise_reseed <- function(samples) {
   if (nrow(samples) == 0) return(tibble::tibble())
@@ -137,6 +132,19 @@ harvest_study_40_rhat <- function(cache = "outputs/intermediate/study_40_bayes_f
   if (!file.exists(cache)) return(NA_real_)
   row <- utils::read.csv(cache, stringsAsFactors = FALSE)
   max(c(row$rhat_max_m7, row$rhat_max_m8), na.rm = TRUE)
+}
+
+harvest_study_45_rhat <- function(
+    cache = "outputs/intermediate/study_45_bayes_factors.csv") {
+  if (!file.exists(cache)) { return(NA_real_)}
+  tab <- utils::read.csv( cache, stringsAsFactors = FALSE)
+  if (!"rhat_max" %in% names(tab)) {return(NA_real_)}
+  row <- tab[tab$claim_id == "study_45_claim_01",,drop = FALSE]
+  if ("prior_label" %in% names(row) && any(row$prior_label == "primary", na.rm = TRUE)
+  ) {row <- row[row$prior_label == "primary",,drop = FALSE]}
+  if (nrow(row) < 1L) {return(NA_real_)}
+  value <- suppressWarnings(as.numeric(row$rhat_max[[1]]))
+  if (!is.finite(value)) {NA_real_} else {value}
 }
 
 harvest_bridge_stat <- function(study_id, claim_id, col) {
@@ -171,6 +179,7 @@ harvest_pipeline_stability <- function(results_csv = "outputs/tables/bayes_facto
       dplyr::filter(.data$keep)
   }
   rhat40 <- harvest_study_40_rhat()
+  rhat45 <- harvest_study_45_rhat()
   res |>
     dplyr::rowwise() |>
     dplyr::mutate(
@@ -185,8 +194,8 @@ harvest_pipeline_stability <- function(results_csv = "outputs/tables/bayes_facto
         .data$source == "analytic" ~ 0,
         TRUE ~ NA_real_
       ),
-      mcmc_rhat = dplyr::if_else(.data$study_id == "study_40", rhat40, NA_real_),
-      converged = dplyr::if_else(.data$study_id == "study_40", !is.na(rhat40) && rhat40 < 1.01, TRUE),
+      mcmc_rhat = dplyr::case_when(.data$study_id == "study_40" ~ rhat40,.data$study_id == "study_45" ~ rhat45,TRUE ~ NA_real_),
+      converged = dplyr::case_when(.data$study_id == "study_40" ~ !is.na(rhat40) && rhat40 < 1.01,.data$study_id == "study_45" ~ !is.na(rhat45) && rhat45 < 1.01,TRUE ~ TRUE),
       lower = dplyr::if_else(is.na(.data$dispersion_log10), .data$central, .data$central - 2 * .data$dispersion_log10),
       upper = dplyr::if_else(is.na(.data$dispersion_log10), .data$central, .data$central + 2 * .data$dispersion_log10),
       n_seeds = NA_integer_
@@ -314,13 +323,12 @@ refresh_stability_forest <- function(table_csv = "outputs/diagnostics/stability_
 
 
 run_project_stability <- function(results_csv = "outputs/tables/bayes_factor_results.csv",
-                                  reseed_seeds = 1:20, seeds_45 = 1:8, mixing_seeds = 101:104,
-                                  out_csv = "outputs/diagnostics/stability_table.csv",
+                                  reseed_seeds = 1:20,
+                                  mixing_seeds = 101:104,                                  out_csv = "outputs/diagnostics/stability_table.csv",
                                   out_forest = "outputs/figures/stability_forest.png",
                                   out_reseed = "outputs/figures/wave3_mc_stability.png") {
   samples <- dplyr::bind_rows(reseed_study_26(reseed_seeds, mixing_seeds),
-                              reseed_study_39(reseed_seeds, mixing_seeds),
-                              reseed_study_45(seeds_45))
+                              reseed_study_39(reseed_seeds, mixing_seeds))
   reseed_summary <- summarise_reseed(samples)
   harvested <- harvest_pipeline_stability(results_csv)
   table <- build_stability_table(reseed_summary, harvested)
