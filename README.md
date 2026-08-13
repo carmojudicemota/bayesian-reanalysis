@@ -140,7 +140,7 @@ achieved by running:
 
 ---
 
-## Repository structure
+## Repository and pipeline structure
 
 ```text
 .
@@ -173,6 +173,10 @@ achieved by running:
 ├── renv/  renv.lock
 └── README.md
 ```
+
+**Pipeline Scheme**
+
+![Pipeline scheme](docs/pipeline.png)
 
 ---
 
