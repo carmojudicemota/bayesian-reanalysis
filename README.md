@@ -91,12 +91,11 @@ More figures, by theme:
 
 The headline tables live in [`outputs/tables/`](outputs/tables):
 
-* [`concordance_summary.csv`](outputs/tables/concordance_summary.csv) — the six-cell counts behind the headline (38 concordant / 9 inconclusive / 0 discordant), claim- and study-weighted.
+* [`concordance_summary.csv`](outputs/tables/concordance_summary.csv) — the six-cell counts behind the headline claim- and study-weighted.
 * [`concordance_claim_level.csv`](outputs/tables/concordance_claim_level.csv) — per-claim six-cell classification (frequentist verdict × Bayesian verdict).
 * [`bayes_factor_results.csv`](outputs/tables/bayes_factor_results.csv) — combined Wave 1/2/3 Bayes factors at every prior scale (splits: [wave 1](outputs/tables/bayes_factor_results_wave1.csv), [wave 2](outputs/tables/bayes_factor_results_wave2.csv), [wave 3](outputs/tables/bayes_factor_results_wave3.csv)).
 * [`significant_p_band_summary.csv`](outputs/tables/significant_p_band_summary.csv) — how the inconclusive rate tracks the reproduced *p*-value band.
 * [`disagreement_drivers_summary.csv`](outputs/tables/disagreement_drivers_summary.csv) — sample-size / *p* / BF profile of each result group.
-* [`manova_robust_sensitivity.csv`](outputs/tables/manova_robust_sensitivity.csv) — Student-*t* (ν = 3) tail-robustness refit for the MANOVA claims.
 * Case detail — [`study_37_full_glmm_bayes_factors.csv`](outputs/tables/study_37_full_glmm_bayes_factors.csv), [`study_43_bayes_factors.csv`](outputs/tables/study_43_bayes_factors.csv).
 
 A fuller list of output tables is in [Outputs](#outputs) below.
