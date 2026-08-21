@@ -119,7 +119,7 @@ A fuller list of output tables is in [Outputs](#outputs) below.
 ## Quick start
 
 ```bash
-git clone https://github.com/carmojudicemota/bayesian-reanalysis-v1.git
+git clone https://github.com/carmojudicemota/bayesian-reanalysis.git
 cd bayesian-reanalysis-v1
 ```
 
